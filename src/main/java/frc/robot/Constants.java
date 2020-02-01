@@ -19,10 +19,14 @@ public final class Constants {
     
     public static final class OIConstants {
         public static final int RightStickX = 4;
+        public static final int RightStickY = 5;
     }
 
     public static class HookConstants {
         public static final int Motor1ID = 0;
     }
     
+    public static class ElevatorConstants {
+        public static final int Motor1ID = 0;
+    }
 }
