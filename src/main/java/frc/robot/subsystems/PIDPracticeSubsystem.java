@@ -27,7 +27,7 @@ public class PIDPracticeSubsystem extends SubsystemBase {
     _talon.configFactoryDefault();
 
 		/* Config sensor used for Primary PID [Velocity] */
-        _talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
+        _talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,
                                             PIDConstants.kPIDLoopIdx, 
                                             PIDConstants.kTimeoutMs);
 
@@ -35,7 +35,7 @@ public class PIDPracticeSubsystem extends SubsystemBase {
 		 * Phase sensor accordingly. 
          * Positive Sensor Reading should match Green (blinking) Leds on Talon
          */
-		_talon.setSensorPhase(true);
+		_talon.setSensorPhase(false);
 
 		/* Config the peak and nominal outputs */
 		_talon.configNominalOutputForward(0, PIDConstants.kTimeoutMs);
@@ -54,7 +54,7 @@ public class PIDPracticeSubsystem extends SubsystemBase {
 
 public void rpsspeed(double rps) {
 
-  SmartDashboard.putNumber("RPS_OUT", _talon.getSelectedSensorVelocity(PIDConstants.kPIDLoopIdx)/PIDConstants.kSensorUnitsPerRotation*10);
+  SmartDashboard.putNumber("RPS_OUT", 10 * _talon.getSelectedSensorVelocity(PIDConstants.kPIDLoopIdx) / 4096);
   SmartDashboard.putNumber("ERROR", _talon.getClosedLoopError(PIDConstants.kPIDLoopIdx));
 
   double targetVelocity_UnitsPer100ms = SmartDashboard.getNumber("RPS", 0) * PIDConstants.kSensorUnitsPerRotation / 10;
