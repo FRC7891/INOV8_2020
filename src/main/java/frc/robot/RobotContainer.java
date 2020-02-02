@@ -24,6 +24,7 @@ import frc.robot.subsystems.HookSubsystem;
 public class RobotContainer {
   private final HookSubsystem m_hooksubsystem = new HookSubsystem();
   XboxController m_controller = new XboxController(0);
+  XboxController m_opperator = new XboxController(1);
   // The robot's subsystems and commands are defined here...
   //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
