@@ -11,13 +11,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveTrainConstants;
 
-public class DriveTrain extends SubsystemBase {
-  private TalonFX MotorL1 = new TalonFX(RobotMap.MotorL1ID);
-  private TalonFX MotorR1 = new TalonFX(RobotMap.MotorR1ID);
-  private TalonFX MotorL2 = new TalonFX(RobotMap.MotorL2ID);
-  private TalonFX MotorR2 = new TalonFX(RobotMap.MotorR2ID);
-  public DriveTrain() {
+public class DriveTrainSubsystem extends SubsystemBase {
+  private TalonFX MotorL1 = new TalonFX(DriveTrainConstants.MotorL1ID);
+  private TalonFX MotorR1 = new TalonFX(DriveTrainConstants.MotorR1ID);
+  private TalonFX MotorL2 = new TalonFX(DriveTrainConstants.MotorL2ID);
+  private TalonFX MotorR2 = new TalonFX(DriveTrainConstants.MotorR2ID);
+  public DriveTrainSubsystem() {
 
   }
 
@@ -26,11 +27,11 @@ public class DriveTrain extends SubsystemBase {
     // This method will be called once per scheduler run
   }
   public void setLeftMotors(double speed) {
-    MotorL1.set(ControlMode.PercentOutput, -speed * RobotMap.SpeedL);
-    MotorL2.set(ControlMode.PercentOutput, -speed * RobotMap.SpeedL);
+    MotorL1.set(ControlMode.PercentOutput, -speed * DriveTrainConstants.SpeedL);
+    MotorL2.set(ControlMode.PercentOutput, -speed * DriveTrainConstants.SpeedL);
     }
     public void setRightMotors(double speed) {
-      MotorR1.set(ControlMode.PercentOutput, speed * RobotMap.SpeedR);
-      MotorR2.set(ControlMode.PercentOutput, speed * RobotMap.SpeedR);
+      MotorR1.set(ControlMode.PercentOutput, speed * DriveTrainConstants.SpeedR);
+      MotorR2.set(ControlMode.PercentOutput, speed * DriveTrainConstants.SpeedR);
       }
 }
