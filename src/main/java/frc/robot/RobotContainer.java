@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.Drivetrain;
+import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.HookSubsystem;
 
 /**
@@ -23,6 +25,7 @@ import frc.robot.subsystems.HookSubsystem;
  */
 public class RobotContainer {
   private final HookSubsystem m_hooksubsystem = new HookSubsystem();
+  private final DriveTrainSubsystem m_drivetrainsubsystem = new DriveTrainSubsystem();
   XboxController m_controller = new XboxController(0);
   XboxController m_opperator = new XboxController(1);
   // The robot's subsystems and commands are defined here...
@@ -42,6 +45,10 @@ public class RobotContainer {
     m_hooksubsystem.setDefaultCommand(
       new RunCommand(() -> m_hooksubsystem.level(m_controller.getRawAxis(OIConstants.RightStickX)), m_hooksubsystem)
       );
+
+    m_drivetrainsubsystem.setDefaultCommand(
+      new Drivetrain(m_drivetrainsubsystem, m_controller)
+    );
   }
 
   /**

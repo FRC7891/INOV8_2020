@@ -29,4 +29,19 @@ public final class Constants {
     public static class ElevatorConstants {
         public static final int Motor1ID = 0;
     }
+
+    public static class DriveTrainConstants {
+
+		public static final int MotorL1ID = 1;
+		public static final int MotorR1ID = 2;
+		public static final int MotorL2ID = 3;
+		public static final int MotorR2ID = 4;
+        
+        public static final double SpeedL = .6;
+        public static final double SpeedR = .6;
+        
+		public static final int LeftStickY = 1;
+		public static final int RightStickX = 4;
+
+    }
 }
