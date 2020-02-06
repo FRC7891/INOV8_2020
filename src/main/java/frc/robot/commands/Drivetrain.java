@@ -21,6 +21,7 @@ public class Drivetrain extends CommandBase {
   public Drivetrain(DriveTrainSubsystem subsystem, XboxController driverController) {
     m_drivetrainsubsystem = subsystem;
     m_driverController = driverController;
+    addRequirements(subsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
