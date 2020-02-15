@@ -17,7 +17,9 @@ import frc.robot.commands.Drivetrain;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HookSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PIDPracticeSubsystem;
+
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -30,7 +32,9 @@ public class RobotContainer {
   private final DriveTrainSubsystem m_drivetrainsubsystem = new DriveTrainSubsystem();
   private final PIDPracticeSubsystem m_pidpracticesubsystem = new PIDPracticeSubsystem(); 
   private final ElevatorSubsystem m_elevatorsubsystem = new ElevatorSubsystem();
+  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   XboxController m_controller = new XboxController(0);
+  XboxController m_opperator = new XboxController(1);
   // The robot's subsystems and commands are defined here...
   //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
@@ -46,7 +50,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_hooksubsystem.setDefaultCommand(
-      new RunCommand(() -> m_hooksubsystem.level(m_controller.getRawAxis(OIConstants.RightStickX)), m_hooksubsystem)
+      new RunCommand(() -> m_hooksubsystem.level(m_opperator.getRawAxis(OIConstants.RightStickX)), m_hooksubsystem)
       );
 
     m_drivetrainsubsystem.setDefaultCommand(
@@ -58,8 +62,12 @@ public class RobotContainer {
     );
 
     m_elevatorsubsystem.setDefaultCommand(
-      new RunCommand(() -> m_elevatorsubsystem.raise(m_controller.getRawAxis(OIConstants.RightStickY)), m_elevatorsubsystem)
+      new RunCommand(() -> m_elevatorsubsystem.raise(m_opperator.getRawAxis(OIConstants.RightStickY)), m_elevatorsubsystem)
     );
+    m_IntakeSubsystem.setDefaultCommand(
+      new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.RightStickX)), m_IntakeSubsystem)
+      );
+
   }
 
   /**

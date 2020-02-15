@@ -8,16 +8,16 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveTrainConstants;
 
 public class DriveTrainSubsystem extends SubsystemBase {
-  private TalonFX MotorL1 = new TalonFX(DriveTrainConstants.MotorL1ID);
-  private TalonFX MotorR1 = new TalonFX(DriveTrainConstants.MotorR1ID);
-  private TalonFX MotorL2 = new TalonFX(DriveTrainConstants.MotorL2ID);
-  private TalonFX MotorR2 = new TalonFX(DriveTrainConstants.MotorR2ID);
+  private TalonSRX MotorL1 = new TalonSRX(DriveTrainConstants.MotorL1ID);
+  private TalonSRX MotorR1 = new TalonSRX(DriveTrainConstants.MotorR1ID);
+  private TalonSRX MotorL2 = new TalonSRX(DriveTrainConstants.MotorL2ID);
+  private TalonSRX MotorR2 = new TalonSRX(DriveTrainConstants.MotorR2ID);
   public DriveTrainSubsystem() {
 
   }
