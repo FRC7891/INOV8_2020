@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.Drivetrain;
+import frc.robot.commands.PIDDrivetrain;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HookSubsystem;
@@ -54,7 +55,7 @@ public class RobotContainer {
       );
 
     m_drivetrainsubsystem.setDefaultCommand(
-      new Drivetrain(m_drivetrainsubsystem, m_controller)
+      new PIDDrivetrain(m_drivetrainsubsystem, m_controller)
     );
 
     m_pidpracticesubsystem.setDefaultCommand(
