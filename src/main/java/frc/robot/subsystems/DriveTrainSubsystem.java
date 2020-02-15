@@ -208,7 +208,7 @@ _pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5,D
     public void PIDArcade(double speed, double turn) {
       			/* Calculate targets from gamepad inputs */
 			double target_sensorUnits = speed * DriveTrainConstants.kSensorUnitsPerRotation * DriveTrainConstants.kRotationsToTravel;
-			double SensorTurnValue = turn * DriveTrainConstants.turn_rate + MotorR1.getSelectedSensorPosition(1);
+			double SensorTurnValue =+ turn * DriveTrainConstants.turn_rate;
 			
 		/*
 		 * Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon
@@ -217,5 +217,20 @@ _pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5,D
 			MotorL1.follow(MotorR1, FollowerType.AuxOutput1);
 			MotorL2.follow(MotorR1, FollowerType.AuxOutput1);
 			MotorR2.follow(MotorR1);
-    }
+	}
+		/** Zero all sensors, both Talons and Pigeon */
+		void zeroSensors() {
+			MotorL1.getSensorCollection().setIntegratedSensorPosition(0,DriveTrainConstants.kTimeoutMs);
+			MotorR1.getSensorCollection().setIntegratedSensorPosition(0,DriveTrainConstants.kTimeoutMs);
+			_pidgey.setYaw(0,DriveTrainConstants.kTimeoutMs);
+			_pidgey.setAccumZAngle(0,DriveTrainConstants.kTimeoutMs);
+			System.out.println("[Quadrature Encoders + Pigeon] All sensors are zeroed.\n");
+		}
+		
+		/** Zero QuadEncoders, used to reset position when initializing Motion Magic */
+		void zeroDistance(){
+			MotorL1.getSensorCollection().setIntegratedSensorPosition(0,DriveTrainConstants.kTimeoutMs);
+			MotorR1.getSensorCollection().setIntegratedSensorPosition(0,DriveTrainConstants.kTimeoutMs);
+			System.out.println("[Quadrature Encoders] All encoders are zeroed.\n");
+		}
 	 }

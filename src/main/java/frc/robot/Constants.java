@@ -92,6 +92,7 @@ public final class Constants {
 
 		//pidgeon ID
 		public final static int PidgeonID = 1;
+		public static double turn_rate = 1/50;
     }
 
     public static class PIDConstants {
