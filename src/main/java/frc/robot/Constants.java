@@ -75,5 +75,12 @@ public final class Constants {
     public final static Gains kGains_Velocit = new Gains( 0.25, 0.001, 20, 0/7200.0,  300,  1.00);
 
 	public static final int Motor1ID = 6;
-    }
+	}
+	
+public static class IntakeConstants {
+
+	public static final int Motor1ID = 0;
+
+}
+
 }
