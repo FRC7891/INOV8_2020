@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -30,6 +31,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   
   //for pidgeon
   private final PigeonIMU _pidgey = new PigeonIMU(3);
+  double SensorTurnValue;
   public DriveTrainSubsystem() {
 /** Invert Directions for Left and Right */
 TalonFXInvertType _leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "false"
@@ -38,6 +40,7 @@ TalonFXInvertType _rightInvert = TalonFXInvertType.Clockwise; //Same as invert =
 /** Config Objects for motor controllers */
 TalonFXConfiguration _leftConfig = new TalonFXConfiguration();
 TalonFXConfiguration _rightConfig = new TalonFXConfiguration();
+
 /* Set Neutral Mode */
 MotorL1.setNeutralMode(NeutralMode.Brake);
 MotorR1.setNeutralMode(NeutralMode.Brake);
@@ -187,7 +190,7 @@ _pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5,D
 				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
 				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
 			*/
-org.ejml.dense.block
+
 			masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; //Local Integrated Sensor
 			masterConfig.diff1Term = FeedbackDevice.RemoteSensor0;   //Aux Selected Sensor
 			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference; //Diff0 - Diff1
@@ -205,10 +208,14 @@ org.ejml.dense.block
     public void PIDArcade(double speed, double turn) {
       			/* Calculate targets from gamepad inputs */
 			double target_sensorUnits = speed * DriveTrainConstants.kSensorUnitsPerRotation * DriveTrainConstants.kRotationsToTravel;
-			double target_turn = turn * turn_rate + MotorR1.getSelectedSensorPosition(1);
+			double SensorTurnValue = turn * DriveTrainConstants.turn_rate + MotorR1.getSelectedSensorPosition(1);
 			
-			/* Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon */
-			_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
-			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
+		/*
+		 * Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon
+		 */
+			MotorR1.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, SensorTurnValue);
+			MotorL1.follow(MotorR1, FollowerType.AuxOutput1);
+			MotorL2.follow(MotorR1, FollowerType.AuxOutput1);
+			MotorR2.follow(MotorR1);
     }
 	 }
