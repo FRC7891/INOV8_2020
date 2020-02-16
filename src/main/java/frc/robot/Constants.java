@@ -39,7 +39,7 @@ public final class Constants {
     }
     
     public static class ElevatorConstants {
-		public static final int Motor1ID = 0;
+		public static final int Motor1ID = 1;
 		public static final int limitSwitchID = 0;
     }
 
