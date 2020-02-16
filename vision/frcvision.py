@@ -22,15 +22,15 @@ import ntcore
 #   JSON format:
 #   {
 #       "team": <team number>,
-#       "ntStream": <"client" or "server", "client" if unspecified>
+#       "ntmode": <"client" or "server", "client" if unspecified>
 #       "cameras": [
 #           {
 #               "name": <camera name>
 #               "path": <path, e.g. "/dev/video0">
 #               "pixel format": <"MJPEG", "YUYV", etc>   // optional
-#               "width": <video Stream width>              // optional
-#               "height": <video Stream height>            // optional
-#               "Ms": <video Stream Ms>                  // optional
+#               "width": <video mode width>              // optional
+#               "height": <video mode height>            // optional
+#               "Ms": <video mode Ms>                  // optional
 #               "brightness": <percentage brightness>    // optional
 #               "white balance": <"auto", "hold", value> // optional
 #               "exposure": <"auto", "hold", value>      // optional
@@ -65,7 +65,7 @@ configFile = "/boot/frc.json"
 class CameraConfig: pass
 
 team = 7891
-server = False
+server = True
 cameraConfigs = []
 switchedCameraConfigs = []
 cameras = []
@@ -146,15 +146,15 @@ def readConfig():
         parseError("could not read team number")
         return False
 
-    # ntStream (optional)
-    if "ntStream" in j:
-        str = j["ntStream"]
+    # ntmode (optional)
+    if "ntmode" in j:
+        str = j["ntmode"]
         if str.lower() == "client":
             server = False
         elif str.lower() == "server":
             server = True
         else:
-            parseError("could not understand ntStream value '{}'".format(str))
+            parseError("could not understand ntmode value '{}'".format(str))
 
     # cameras
     try:
@@ -236,7 +236,7 @@ def OpenMV(prefix, arrIn, arrOut, cs, camera):
                 time.sleep(2)
                 ser = serial.Serial(camera, 11999999, timeout=1)
             except:
-                print("Unexpected error(1):", sys.exc_info()[0])
+                print("Unexpected error(1):", sys.exc_info())
                 continue
             print(ser.name + ' connected!')
             serialOpen = True
@@ -257,7 +257,7 @@ def OpenMV(prefix, arrIn, arrOut, cs, camera):
                 cnt -= 1
                 arr.extend(bytearray(ser.read((len(arrOut) * 4) - len(arr))))
         except:
-            print("Unexpected error(2):", sys.exc_info()[0])
+            print("Unexpected error(2):", sys.exc_info())
             print(ser.name + ' disconnected!')
             serialOpen = False
             ser.close()
@@ -279,7 +279,7 @@ def OpenMV(prefix, arrIn, arrOut, cs, camera):
                     cnt -= 1
                     arr.extend(bytearray(ser.read(jpegSize - len(arr))))
             except:
-                print("Unexpected error(3):", sys.exc_info()[0])
+                print("Unexpected error(3):", sys.exc_info())
                 print(ser.name + ' disconnected!')
                 serialOpen = False
                 ser.close()
@@ -326,11 +326,12 @@ if __name__ == "__main__":
 
     threading.Thread(
         target=OpenMV,
-        args=(
-            'Ball',
-            ['Img', 'Light'],
-            ['ImgMs', 'UsbMs', 'JpegSize'], cs, '/dev/ttyACM0'
-        ),  #'/dev/serial/by-id/usb-OpenMV_OpenMV_Virtual_Comm_Port_in_FS_Mode_000000000011-if00'
+        args=
+        ('Ball',
+         ['Img', 'Light'],
+         ['ImgMs', 'UsbMs', 'JpegSize'],
+         cs, '/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0'
+         ),  #'/dev/ttyACM0'
         daemon=True).start()
 
     # loop forever
