@@ -34,6 +34,7 @@ public class RobotContainer {
   private final PIDPracticeSubsystem m_pidpracticesubsystem = new PIDPracticeSubsystem(); 
   private final ElevatorSubsystem m_elevatorsubsystem = new ElevatorSubsystem();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+  private final HopperSubsystem m_HopperSubsystem + new HopperSubsystem();
   XboxController m_controller = new XboxController(0);
   XboxController m_opperator = new XboxController(1);
   // The robot's subsystems and commands are defined here...
