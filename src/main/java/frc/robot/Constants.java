@@ -21,7 +21,8 @@ public final class Constants {
 	
     public static final class OIConstants {
         public static final int RightStickX = 4;
-        public static final int RightStickY = 5;
+		public static final int RightStickY = 5;
+		public static final int XboxOperator = 1;
     }
 
     public static class HookConstants {
@@ -39,7 +40,7 @@ public final class Constants {
     }
     
     public static class ElevatorConstants {
-		public static final int Motor1ID = 0;
+		public static final int Motor1ID = 1;
 		public static final int limitSwitchID = 0;
     }
 
