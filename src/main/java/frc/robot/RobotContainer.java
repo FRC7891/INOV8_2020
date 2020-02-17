@@ -8,10 +8,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 //import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.Drivetrain;
 import frc.robot.commands.PIDDrivetrain;
@@ -20,6 +23,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HookSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PIDPracticeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 
 /**
@@ -35,6 +39,7 @@ public class RobotContainer {
   private final ElevatorSubsystem m_elevatorsubsystem = new ElevatorSubsystem();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final HopperSubsystem m_HopperSubsystem + new HopperSubsystem();
+  private final ShooterSubsystem m_ShooterSubsytem = new ShooterSubsystem();
   XboxController m_controller = new XboxController(0);
   XboxController m_opperator = new XboxController(1);
   // The robot's subsystems and commands are defined here...
@@ -79,7 +84,20 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-  }
+//This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
+    new JoystickButton(m_opperator, Button.kA.value)
+        .whenPressed(() -> m_ShooterSubsytem.ballMovingFunction(0.1,.1))
+        .whenReleased(() -> m_ShooterSubsytem.ballMovingFunction(.1,.1));
+//This code if for shooting balls for high goal from fixed posiition(need testing for values)
+    new JoystickButton(m_opperator, Button.kY.value)
+        .whenPressed(() -> m_ShooterSubsytem.ballMovingFunction(0.1,.1))
+        .whenReleased(() -> m_ShooterSubsytem.ballMovingFunction(.1,.1));
+
+//This code is for passing balls from loading zone to trench(need testing for values)
+    new JoystickButton(m_opperator, Button.kY.value)
+         .whenPressed(() -> m_ShooterSubsytem.ballMovingFunction(0.1,.1))
+         .whenReleased(() -> m_ShooterSubsytem.ballMovingFunction(.1,.1));
+}
 
 
   /**
