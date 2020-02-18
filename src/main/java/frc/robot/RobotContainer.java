@@ -18,9 +18,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.Drivetrain;
 import frc.robot.commands.PIDDrivetrain;
+import frc.robot.commands.ShooterSpeedReached;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HookSubsystem;
+import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PIDPracticeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -38,7 +40,7 @@ public class RobotContainer {
   private final PIDPracticeSubsystem m_pidpracticesubsystem = new PIDPracticeSubsystem(); 
   private final ElevatorSubsystem m_elevatorsubsystem = new ElevatorSubsystem();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-  private final HopperSubsystem m_HopperSubsystem + new HopperSubsystem();
+  private final HopperSubsystem m_hoppersubsystem = new HopperSubsystem();
   private final ShooterSubsystem m_ShooterSubsytem = new ShooterSubsystem();
   XboxController m_controller = new XboxController(0);
   XboxController m_opperator = new XboxController(1);
@@ -63,6 +65,9 @@ public class RobotContainer {
     m_drivetrainsubsystem.setDefaultCommand(
       new PIDDrivetrain(m_drivetrainsubsystem, m_controller)
     );
+    m_hoppersubsystem.setDefaultCommand(
+      new RunCommand(() -> m_hoppersubsystem.motorStop())
+      );
 
     m_pidpracticesubsystem.setDefaultCommand(
       new RunCommand(() -> m_pidpracticesubsystem.rpsspeed(0), m_pidpracticesubsystem)
@@ -84,7 +89,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-//This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
+/*This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
     new JoystickButton(m_opperator, Button.kA.value)
         .whenPressed(() -> m_ShooterSubsytem.ballMovingFunction(0.1,.1))
         .whenReleased(() -> m_ShooterSubsytem.ballMovingFunction(.1,.1));
@@ -97,7 +102,15 @@ public class RobotContainer {
     new JoystickButton(m_opperator, Button.kY.value)
          .whenPressed(() -> m_ShooterSubsytem.ballMovingFunction(0.1,.1))
          .whenReleased(() -> m_ShooterSubsytem.ballMovingFunction(.1,.1));
-}
+*/
+//When the B button on the Xbox controller is pressed, a new command will be run which moves the hopper
+//backwards for (Insert time) in order to free up space for spinning the motor which happens after
+//because of the .andThen command. After it is shown that the shooter speed is true, it will move the
+//hopper forward and into the shooter, firing the balls.
+new JoystickButton(m_controller, Button.kB.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportBackward(), m_hoppersubsystem).withTimeout(0.3)
+        .andThen(new ShooterSpeedReached(),(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem))));
+  }
 
 
   /**

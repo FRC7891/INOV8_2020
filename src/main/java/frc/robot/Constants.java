@@ -27,6 +27,12 @@ public final class Constants {
     public static class HookConstants {
         public static final int Motor1ID = 0;
 	}
+
+	public static class HopperConstants {
+        public static final int Motor2ID = 0;
+		public static double forwardspeed = 0.1;
+		public static double backwardspeed = -0.1;
+	}
 	
 	public static final class ShooterConstants {
         public static final int TopMotorID = 5;

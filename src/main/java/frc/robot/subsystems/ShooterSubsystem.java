@@ -41,4 +41,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // This method will be called once per scheduler run
   }
+  //Charlie, change this. I am just using this as a placeholder until you're donw
+  public void SetSpeed(){
+  }
+  //More logic required for encoders
+  public boolean speedReached(){
+    return(true);
+  }
 }
