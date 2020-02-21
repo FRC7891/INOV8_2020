@@ -19,22 +19,21 @@ public class IntakeSubsystem extends SubsystemBase {
  
    public IntakeSubsystem() {
 
+   }
 
-  }
+
+  
 
   public void suck (double rotations){
 
     motorsuck.set(ControlMode.PercentOutput, rotations);
-    
-
   }
+
+  
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     
-    
-
-  
   }
 }

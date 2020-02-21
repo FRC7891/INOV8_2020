@@ -33,4 +33,7 @@ public void motorStop() {
     motor2.set(ControlMode.PercentOutput, 0);
 
 }
+public Object TransportForward(double rawAxis) {
+	return null;
+}
 }

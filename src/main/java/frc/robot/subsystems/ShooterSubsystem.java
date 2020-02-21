@@ -44,6 +44,7 @@ public class ShooterSubsystem extends SubsystemBase {
   //Charlie, change this. I am just using this as a placeholder until you're donw
   public void SetSpeed(){
   }
+  //Charlie I need this done
   //More logic required for encoders
   public boolean speedReached(){
     return(true);

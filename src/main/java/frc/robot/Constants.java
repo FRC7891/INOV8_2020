@@ -22,6 +22,7 @@ public final class Constants {
     public static final class OIConstants {
         public static final int RightStickX = 4;
         public static final int RightStickY = 5;
+		public static final int LeftStickY = 0;
     }
 
     public static class HookConstants {
