@@ -25,7 +25,7 @@ public final class Constants {
     }
 
     public static class HookConstants {
-        public static final int Motor1ID = 0;
+        public static final int Motor1ID = 3;
 	}
 
 	public static class HopperConstants {
