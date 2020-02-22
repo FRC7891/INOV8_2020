@@ -77,8 +77,14 @@ public class RobotContainer {
       new RunCommand(() -> m_elevatorsubsystem.raise(m_opperator.getRawAxis(OIConstants.RightStickY)), m_elevatorsubsystem)
     );
     m_IntakeSubsystem.setDefaultCommand(
-      new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.RightStickX)), m_IntakeSubsystem)
+      new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.RightStickY)), m_IntakeSubsystem)
       );
+    m_hoppersubsystem.setDefaultCommand(
+      new RunCommand(() -> m_hoppersubsystem.TransportForward(m_opperator.getRawAxis(OIConstants.LeftStickY)),
+            m_IntakeSubsystem)
+
+    );
+  
 
   }
 
@@ -110,8 +116,11 @@ public class RobotContainer {
 new JoystickButton(m_controller, Button.kB.value)
         .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportBackward(), m_hoppersubsystem).withTimeout(0.3)
         .andThen(new ShooterSpeedReached(),(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem))));
-  }
 
+
+
+;
+}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

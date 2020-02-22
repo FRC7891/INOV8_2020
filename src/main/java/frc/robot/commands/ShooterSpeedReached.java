@@ -33,8 +33,21 @@ public class ShooterSpeedReached extends CommandBase {
   }
 
   // Returns true when the command should end.
+  //If necessary, just do return true
   @Override
   public boolean isFinished() {
     return true;
   }
+  /*
+  @Override
+  public boolean isFinished() {
+    double get;
+    if (get = 0.3) {
+    return true;
+    }
+    else {
+      get++;
+    }
+
+  }*/
 }
