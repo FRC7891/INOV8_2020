@@ -81,8 +81,7 @@ public class RobotContainer {
       );
     m_hoppersubsystem.setDefaultCommand(
       new RunCommand(() -> m_hoppersubsystem.TransportForward(m_opperator.getRawAxis(OIConstants.LeftStickY)),
-            m_IntakeSubsystem)
-
+            m_hoppersubsystem)
     );
   
 
@@ -118,8 +117,10 @@ new JoystickButton(m_controller, Button.kB.value)
         .andThen(new ShooterSpeedReached(),(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem))));
 
 
-
-;
+new JoystickButton(m_opperator, Button.kStickLeft.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem)
+        .alongWith
+        (new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
 }
 
   /**
