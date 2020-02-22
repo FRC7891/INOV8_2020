@@ -79,7 +79,7 @@ public final class Constants {
 	
 public static class IntakeConstants {
 
-	public static final int Motor1ID = 0;
+	public static final int Motor1ID = 3;
 
 }
 
