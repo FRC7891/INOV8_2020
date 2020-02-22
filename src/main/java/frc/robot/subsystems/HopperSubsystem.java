@@ -8,13 +8,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HopperConstants;
 
 public class HopperSubsystem extends SubsystemBase {
   
-  public final VictorSPX motor2 = new VictorSPX(HopperConstants.Motor2ID);
+  public final TalonSRX motor2 = new TalonSRX(HopperConstants.Motor2ID);
   public HopperSubsystem() {
 
   }
@@ -33,7 +34,13 @@ public void motorStop() {
     motor2.set(ControlMode.PercentOutput, 0);
 
 }
+
 public Object TransportForward(double rawAxis) {
-	return null;
+  return null;
+
+}
+
+public void spin(double speed) {
+  motor2.set(ControlMode.PercentOutput, speed*0.4);
 }
 }

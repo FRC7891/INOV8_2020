@@ -12,5 +12,12 @@
     "**/.settings": true,
     "**/.factorypath": true,
     "**/*~": true
-  }
+  },
+  "cSpell.words": [
+    "drivetrainsubsystem",
+    "elevatorsubsystem",
+    "hooksubsystem",
+    "hoppersubsystem",
+    "pidpracticesubsystem"
+  ]
 }

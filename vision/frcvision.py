@@ -324,12 +324,22 @@ if __name__ == "__main__":
     # start 'Camera' camera server for OpenMv cameras
     cs = CameraServer.getInstance().putVideo('Camera', 320, 240)
 
+#    threading.Thread(
+#        target=OpenMV,
+#        args=
+#        ('Ball',
+#         ['Img', 'Light'],
+#         ['ImgMs', 'UsbMs', 'JpegSize'],
+#         cs, '/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0'
+#         ),  #'/dev/ttyACM0'
+#        daemon=True).start()
+
     threading.Thread(
         target=OpenMV,
         args=
         ('Ball',
          ['Img', 'Light'],
-         ['ImgMs', 'UsbMs', 'JpegSize'],
+         ['Tracking', 'Angle', 'JpegSize'],
          cs, '/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0'
          ),  #'/dev/ttyACM0'
         daemon=True).start()

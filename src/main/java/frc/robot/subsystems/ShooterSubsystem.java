@@ -32,17 +32,35 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    /*
+    
+    topPercent = SmartDashboard.getNumber("topMotor%", 0);
+    botPercent = SmartDashboard.getNumber("botMotor%", 0);
+    
+    topMotor.set(ControlMode.PercentOutput, -topPercent);
+    botMotor.set(ControlMode.PercentOutput, botPercent);
+    
+    // This method will be called once per scheduler run
+    
+    */
+  }
+  //Charlie, change this. I am just using this as a placeholder until you're done
+  public void sliderValueFunction() {
+  
     topPercent = SmartDashboard.getNumber("topMotor%", 0);
     botPercent = SmartDashboard.getNumber("botMotor%", 0);
 
-    topMotor.set(ControlMode.PercentOutput, topPercent);
+    topMotor.set(ControlMode.PercentOutput, -topPercent);
     botMotor.set(ControlMode.PercentOutput, botPercent);
 
-    // This method will be called once per scheduler run
-  }
-  //Charlie, change this. I am just using this as a placeholder until you're donw
-  public void SetSpeed(){
+  };
+
+
+  public void ballMovingFunction(double top, double bot) {
+
+    topMotor.set(ControlMode.PercentOutput, -top);
+    botMotor.set(ControlMode.PercentOutput, bot);
+
   }
   //Charlie I need this done
   //More logic required for encoders

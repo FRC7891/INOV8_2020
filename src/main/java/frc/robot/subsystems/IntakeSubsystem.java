@@ -8,14 +8,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 
 public class IntakeSubsystem extends SubsystemBase {
   
-  public final VictorSPX motorsuck = new VictorSPX(IntakeConstants.Motor1ID);
+  public final TalonSRX  motorsuck = new TalonSRX(IntakeConstants.Motor1ID);
  
    public IntakeSubsystem() {
 
