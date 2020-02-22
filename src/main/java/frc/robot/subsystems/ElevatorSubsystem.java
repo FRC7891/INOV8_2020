@@ -38,7 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void raise(double speed) {
 
-    if(elevLimitSwitch.get() == true && speed < 0) {
+    if(elevLimitSwitch.get() == false && speed < 0) {
       speed = 0;
       motor1.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
     }
