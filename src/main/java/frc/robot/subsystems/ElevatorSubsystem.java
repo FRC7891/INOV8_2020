@@ -25,9 +25,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     motor1.configFactoryDefault();
-		
+
 		/* Config the sensor used for Primary PID and sensor direction */
-        motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 
+        motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,
                                             0,
 				                            0);
 
@@ -46,20 +46,20 @@ public class ElevatorSubsystem extends SubsystemBase {
       speed = 0;
       motor1.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
     }
-    
+
     /* else if(motor1.getSelectedSensorPosition() >= 40000 && speed > 0)
     {
       speed = 0;
     }
     */
-    
+
     motor1.set(ControlMode.PercentOutput, speed);
   }
 
-  
+
   @Override
   public void periodic() {
-        
+
   }
 }
 

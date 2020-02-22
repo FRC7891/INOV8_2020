@@ -37,7 +37,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class RobotContainer {
   private final HookSubsystem m_hooksubsystem = new HookSubsystem();
   private final DriveTrainSubsystem m_drivetrainsubsystem = new DriveTrainSubsystem();
-  private final PIDPracticeSubsystem m_pidpracticesubsystem = new PIDPracticeSubsystem(); 
+  private final PIDPracticeSubsystem m_pidpracticesubsystem = new PIDPracticeSubsystem();
   private final ElevatorSubsystem m_elevatorsubsystem = new ElevatorSubsystem();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final HopperSubsystem m_hoppersubsystem = new HopperSubsystem();
@@ -82,7 +82,7 @@ public class RobotContainer {
       m_hoppersubsystem.setDefaultCommand(
           new RunCommand(() -> m_hoppersubsystem.spin(m_opperator.getRawAxis(OIConstants.LeftStickY) * 0.90),
               m_hoppersubsystem));
-    
+
 
       //    m_hoppersubsystem.setDefaultCommand(
 //      new RunCommand(() -> m_hoppersubsystem.TransportForward(m_opperator.getRawAxis(OIConstants.LeftStickY)),
@@ -108,7 +108,7 @@ public class RobotContainer {
     new JoystickButton(m_opperator, Button.kY.value)
         .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(0.65,.75))
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
-//This code is for toggling slider shooter 
+//This code is for toggling slider shooter
     new JoystickButton(m_opperator,Button.kX.value)
         .whenPressed(() -> m_ShooterSubsystem.sliderValueFunction())
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
@@ -117,12 +117,12 @@ public class RobotContainer {
     new JoystickButton(m_opperator, Button.kY.value)
          .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(.4,.5))
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
-         
-    //This code is for un-jamming the hopper 
+
+    //This code is for un-jamming the hopper
     new JoystickButton(m_opperator, Button.kB.value)
         .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(-.3,-.3))
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
-    
+
 
 //When the B button on the Xbox controller is pressed, a new command will be run which moves the hopper
 //backwards for (Insert time) in order to free up space for spinning the motor which happens after
@@ -133,8 +133,10 @@ new JoystickButton(m_controller, Button.kB.value)
         .andThen(new ShooterSpeedReached(),(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem))));
 
 
-
-;
+new JoystickButton(m_opperator, Button.kStickLeft.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem)
+        .alongWith
+        (new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
 }
 
   /**
