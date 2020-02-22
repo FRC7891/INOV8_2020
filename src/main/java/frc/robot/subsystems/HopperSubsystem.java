@@ -10,30 +10,30 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.HopperConstants;
 
-
-public class IntakeSubsystem extends SubsystemBase {
+public class HopperSubsystem extends SubsystemBase {
   
-  public final VictorSPX motorsuck = new VictorSPX(IntakeConstants.Motor1ID);
- 
-   public IntakeSubsystem() {
+  public final VictorSPX motor2 = new VictorSPX(HopperConstants.Motor2ID);
+  public HopperSubsystem() {
 
-   }
-
-
-  
-
-  public void suck (double rotations){
-
-    motorsuck.set(ControlMode.PercentOutput, rotations);
   }
+  public void transportForward() {
 
-  
+    motor2.set(ControlMode.PercentOutput, HopperConstants.forwardspeed);
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    
   }
+  public void transportBackward() {
+
+    motor2.set(ControlMode.PercentOutput, HopperConstants.backwardspeed);
+
+}
+
+public void motorStop() {
+    motor2.set(ControlMode.PercentOutput, 0);
+
+}
+public Object TransportForward(double rawAxis) {
+	return null;
+}
 }

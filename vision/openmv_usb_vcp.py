@@ -65,20 +65,24 @@ while (True):
         img.copy(x_scale=.25,y_scale=.25,copy_to_fb=True)
         img.compress(88) #90
 
-    command = usb.recv(1, timeout=1000)
-    if not command:
+    cmd = usb.recv(2, timeout=1000) # Change this to match the number of commands received
+    if not cmd:
         continue
-    cmd = command[0]
-    if cmd&1 != 0 and stream:
-        usb.send(ustruct.pack("<LLL", imgMs, usbMs, img.size()))
+    if cmd[0] == b's'[0] and stream:
+        usb.send(ustruct.pack(">LLL", imgMs, usbMs, img.size()))
         usb.send(img)
     else:
-        usb.send(ustruct.pack("<LLL", imgMs, usbMs, 0))
-        if cmd&1 != 0:
+        usb.send(ustruct.pack(">LLL", imgMs, usbMs, 0))
+        if cmd[0] == b's'[0]:
             stream = True
         else:
             stream = False
     usbMs = time.ticks() - ticks
+
+    if cmd[1] == b'r'[0]:
+        pyb.LED(1).toggle()
+    if cmd[1] == b'g'[0]:
+        pyb.LED(2).toggle()
     # /\ /\ USB CODE /\ /\
 
     #print('{} {}'.format(imgMs,usbMs))

@@ -22,15 +22,15 @@ import ntcore
 #   JSON format:
 #   {
 #       "team": <team number>,
-#       "ntStream": <"client" or "server", "client" if unspecified>
+#       "ntmode": <"client" or "server", "client" if unspecified>
 #       "cameras": [
 #           {
 #               "name": <camera name>
 #               "path": <path, e.g. "/dev/video0">
 #               "pixel format": <"MJPEG", "YUYV", etc>   // optional
-#               "width": <video Stream width>              // optional
-#               "height": <video Stream height>            // optional
-#               "Ms": <video Stream Ms>                  // optional
+#               "width": <video mode width>              // optional
+#               "height": <video mode height>            // optional
+#               "Ms": <video mode Ms>                  // optional
 #               "brightness": <percentage brightness>    // optional
 #               "white balance": <"auto", "hold", value> // optional
 #               "exposure": <"auto", "hold", value>      // optional
@@ -65,7 +65,7 @@ configFile = "/boot/frc.json"
 class CameraConfig: pass
 
 team = 7891
-server = False
+server = True
 cameraConfigs = []
 switchedCameraConfigs = []
 cameras = []
@@ -146,15 +146,15 @@ def readConfig():
         parseError("could not read team number")
         return False
 
-    # ntStream (optional)
-    if "ntStream" in j:
-        str = j["ntStream"]
+    # ntmode (optional)
+    if "ntmode" in j:
+        str = j["ntmode"]
         if str.lower() == "client":
             server = False
         elif str.lower() == "server":
             server = True
         else:
-            parseError("could not understand ntStream value '{}'".format(str))
+            parseError("could not understand ntmode value '{}'".format(str))
 
     # cameras
     try:
@@ -219,64 +219,68 @@ def startSwitchedCamera(config):
 # arrOut - ['JpegSize','ImgMs','Tracking','Turn','Dist'] - Received data to be unpacked and assigned to NetworkTable entries
 #            JpegSize is special in that when this string is matched, that many bytes are then read to build and send an image.
 # camera - path to the OpenMV Camera to use
-def OpenMV(prefix, arrIn, arrOut, camera):
+# cs     - the shared cameraserver to use for all the cameras
+def OpenMV(prefix, arrIn, arrOut, cs, camera):
     serialOpen = False
     ser = None
-    cs = CameraServer.getInstance().putVideo(prefix+'Camera', 320, 240)
 
     for i, v in enumerate(arrIn):
-        NetworkTablesInstance.getDefault().getTable('SmartDashboard').setDefaultBoolean(prefix + v, False)
+        NetworkTablesInstance.getDefault().getTable(prefix).setDefaultString(v, '!')
 
+    # loop forever
     while True:
         jpegSize = 0
-
-        cmd = 0x80
-        for i, v in enumerate(arrIn):
-            cmd |= NetworkTablesInstance.getDefault().getTable('SmartDashboard').getBoolean(prefix + v, False) << i
 
         if serialOpen == False:
             try:
                 time.sleep(2)
                 ser = serial.Serial(camera, 11999999, timeout=1)
             except:
-                print("Unexpected error:", sys.exc_info()[0])
+                print("Unexpected error(1):", sys.exc_info())
                 continue
-            print(ser.name+' connected!')  # check which port was really used
+            print(ser.name + ' connected!')
             serialOpen = True
+
+        cmds = ''
+        for i, v in enumerate(arrIn):
+            s = NetworkTablesInstance.getDefault().getTable(prefix).getString(v, '!')
+            if s == '':
+                s = '!'
+            cmds += s[0]
 
         arr = bytearray()
         try:
             ser.flush()
-            ser.write(bytes([cmd]))
-            cnt = 10
+            ser.write(cmds.encode())
+            cnt = 1000
             while (len(arr) != (len(arrOut) * 4) and cnt != 0):
                 cnt -= 1
-                arr.extend(bytearray(ser.read(12 - len(arr))))
+                arr.extend(bytearray(ser.read((len(arrOut) * 4) - len(arr))))
         except:
-            print("Unexpected error:", sys.exc_info()[0])
-            print(ser.name+' disconnected!')
+            print("Unexpected error(2):", sys.exc_info())
+            print(ser.name + ' disconnected!')
             serialOpen = False
             ser.close()
             continue
 
-        for i, v in enumerate(struct.unpack("<LLL", arr)):
+        for i, v in enumerate(struct.unpack('>' + 'L' * len(arrOut), arr)):
             if arrOut[i] == 'JpegSize':
                 jpegSize = v
-            NetworkTablesInstance.getDefault().getTable('SmartDashboard').putNumber(prefix + arrOut[i], v)
-        NetworkTablesInstance.flush()
-        #(imgMs, usbMs, imgSize) = struct.unpack("<LLL", arr)
-        #print('{} {} {}'.format(imgMs, usbMs, imgSize))
+            NetworkTablesInstance.getDefault().getTable(prefix).putNumber(arrOut[i], v)
+
         if jpegSize > 0x8000:
             continue
 
         if jpegSize != 0:
             arr = bytearray()
             try:
-                while (len(arr) != jpegSize):
-                    arr.extend(bytearray(ser.read(jpegSize-len(arr))))
+                cnt = 1000
+                while (len(arr) != jpegSize and cnt != 0):
+                    cnt -= 1
+                    arr.extend(bytearray(ser.read(jpegSize - len(arr))))
             except:
-                print("Unexpected error:", sys.exc_info()[0])
-                print(ser.name+' disconnected!')
+                print("Unexpected error(3):", sys.exc_info())
+                print(ser.name + ' disconnected!')
                 serialOpen = False
                 ser.close()
                 continue
@@ -317,15 +321,18 @@ if __name__ == "__main__":
     for config in switchedCameraConfigs:
         startSwitchedCamera(config)
 
+    # start 'Camera' camera server for OpenMv cameras
+    cs = CameraServer.getInstance().putVideo('Camera', 320, 240)
+
     threading.Thread(
         target=OpenMV,
-        args=(
-            'Ball',
-            ['Img', 'Light'],
-            ['ImgMs', 'UsbMs', 'JpegSize'], '/dev/ttyACM0'
-        ),  #'/dev/serial/by-id/usb-OpenMV_OpenMV_Virtual_Comm_Port_in_FS_Mode_000000000011-if00'
+        args=
+        ('Ball',
+         ['Img', 'Light'],
+         ['ImgMs', 'UsbMs', 'JpegSize'],
+         cs, '/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0'
+         ),  #'/dev/ttyACM0'
         daemon=True).start()
-    #['ImgData','ImgMs','Tracking','Turn','Dist']
 
     # loop forever
     while True:
