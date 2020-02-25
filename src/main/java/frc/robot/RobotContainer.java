@@ -66,7 +66,7 @@ public class RobotContainer {
       new PIDDrivetrain(m_drivetrainsubsystem, m_controller)
     );
     m_hoppersubsystem.setDefaultCommand(
-      new RunCommand(() -> m_hoppersubsystem.motorStop())
+      new RunCommand(() -> m_hoppersubsystem.motorStop(), m_hoppersubsystem)
       );
 
     m_pidpracticesubsystem.setDefaultCommand(
@@ -81,10 +81,9 @@ public class RobotContainer {
       );
     m_hoppersubsystem.setDefaultCommand(
       new RunCommand(() -> m_hoppersubsystem.TransportForward(m_opperator.getRawAxis(OIConstants.LeftStickY)),
-            m_IntakeSubsystem)
+            m_hoppersubsystem)
 
     );
-  
 
   }
 
