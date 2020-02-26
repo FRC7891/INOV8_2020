@@ -16,38 +16,42 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-	
+
 	public static final int kTimeoutMs = 30;
-	
+
     public static final class OIConstants {
         public static final int RightStickX = 4;
-        public static final int RightStickY = 5;
-		public static final int LeftStickY = 0;
+				public static final int RightStickY = 5;
+				public static final int RightTrigger = 3;
+				public static final int LeftTrigger = 2;
+		public static final int LeftStickY = 1;
+		public static final int LeftStickX = 0;
     }
 
     public static class HookConstants {
-        public static final int Motor1ID = 3;
+        public static final int Motor1ID = 9;
 	}
 
 	public static class HopperConstants {
-        public static final int Motor2ID = 0;
+        public static final int Motor2ID = 8;
 		public static double forwardspeed = 0.1;
 		public static double backwardspeed = -0.1;
 	}
-	
+
 	public static final class ShooterConstants {
         public static final int TopMotorID = 5;
 		public static final int BotMotorID = 6;
-		
+
 		public static final double HighShot = 0;
 		public static final double Pass = 0;
 		public static final double LowShot = 0;
 
     }
-    
+
     public static class ElevatorConstants {
-		public static final int Motor1ID = 0;
-		public static final int limitSwitchID = 0;
+		public static final int Motor1ID = 10;
+		public static final int limitSwitchID = 8;
+		public static final int limitSwitchID2 = 9;
     }
 
     public static class DriveTrainConstants {
@@ -56,12 +60,12 @@ public final class Constants {
 		public static final int MotorR1ID = 2;
 		public static final int MotorL2ID = 3;
 		public static final int MotorR2ID = 4;
-        
-        public static final double SpeedL = .6;
-        public static final double SpeedR = .6;
-        
-		public static final int LeftStickY = 1;
-		public static final int RightStickX = 4;
+
+        public static final double SpeedL = .4;
+        public static final double SpeedR = .4;
+
+		public static final int LeftStickY = 4;
+		public static final int RightStickX = 1;
 
 		// PID Gains                                           kP   kI   kD    kF              kI     kZ
 		public final static Gains kGains_Distanc = new Gains( 0.1, 0.0,  0.0, 0.0,            100,  0.50 );
@@ -88,23 +92,23 @@ public final class Constants {
 
 		//
 		public final static int kSensorUnitsPerRotation = 4096;
-	
+
 		/**
 		 * Number of rotations to drive when performing Distance Closed Loop
 		 */
 		public final static double kRotationsToTravel = 6;
-		
+
 		/**
 		 * This is a property of the Pigeon IMU, and should not be changed.
 		 */
 		public final static int kPigeonUnitsPerRotation = 8192;
-	
+
 		/**
 		 * Set to zero to skip waiting for confirmation.
 		 * Set to nonzero to wait and report to DS if action fails.
 		 */
 		public final static int kTimeoutMs = 30;
-	
+
 		/**
 		 * Motor neutral dead-band, set to the minimum 0.1%.
 		 */
@@ -140,16 +144,16 @@ public final class Constants {
 	/**
 	 * PID Gains may have to be adjusted based on the responsiveness of control loop.
      * kF: 1023 represents output value to Talon at 100%, 7200 represents Velocity units at 100% output
-     * 
+     *
 	 * 	                                    			  kP   kI   kD   kF          Iz    PeakOut */
     public final static Gains kGains_Velocit = new Gains( 0.25, 0.001, 20, 0/7200.0,  300,  1.00);
 
 	public static final int Motor1ID = 6;
 	}
-	
+
 public static class IntakeConstants {
 
-	public static final int Motor1ID = 3;
+	public static final int Motor1ID = 7;
 
 }
 

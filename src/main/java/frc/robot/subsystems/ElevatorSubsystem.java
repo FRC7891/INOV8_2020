@@ -20,14 +20,14 @@ import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final DigitalInput elevLimitSwitch = new DigitalInput(ElevatorConstants.limitSwitchID);
-
+  private final DigitalInput elevLimitSwitchTop = new DigitalInput(ElevatorConstants.limitSwitchID2);
   public final TalonSRX motor1 = new TalonSRX(ElevatorConstants.Motor1ID);
 
   public ElevatorSubsystem() {
     motor1.configFactoryDefault();
-		
+
 		/* Config the sensor used for Primary PID and sensor direction */
-        motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 
+        motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,
                                             0,
 				                            0);
 
@@ -38,21 +38,28 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void raise(double speed) {
 
-    if(elevLimitSwitch.get() == true && speed < 0) {
+    if (elevLimitSwitch.get() == true && speed > 0) {
       speed = 0;
       motor1.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
     }
-    else if(motor1.getSelectedSensorPosition() >= 40000 && speed > 0)
+    else if (elevLimitSwitchTop.get() == true && speed < 0) {
+      speed = 0;
+      motor1.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
+    }
+
+    /* else if(motor1.getSelectedSensorPosition() >= 40000 && speed > 0)
     {
       speed = 0;
     }
-    
+    */
+
     motor1.set(ControlMode.PercentOutput, speed);
   }
 
-  
+
   @Override
   public void periodic() {
-        
+
   }
 }
+

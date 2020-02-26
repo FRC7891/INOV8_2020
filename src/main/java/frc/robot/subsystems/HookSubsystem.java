@@ -20,9 +20,9 @@ public class HookSubsystem extends SubsystemBase {
 
   }
 
-  public void level(double speed) {
+  public void level(double speed,double speed2) {
 
-      motor1.set(ControlMode.PercentOutput, speed);
+      motor1.set(ControlMode.PercentOutput,-speed+speed2);
 
   }
 }
