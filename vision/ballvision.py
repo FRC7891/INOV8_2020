@@ -1,22 +1,26 @@
 # Single Color RGB565 Blob Tracking Example
-#
+#BALL SLURPER
 # This example shows off single color RGB565 tracking using the OpenMV Cam.
 
-import sensor, image, time, math
+import sensor, image, time, math,ustruct, pyb
+from pyb import USB_VCP
 
-threshold_index = 0 # 0 for red, 1 for green, 2 for blue
+DBG=True
+
+
+usb = USB_VCP()
 
 # Color Tracking Thresholds (L Min, L Max, A Min, A Max, B Min, B Max)
 # The below thresholds track in general red/green/blue things. You may wish to tune them...
-thresholds = [] #
 
 sensor.reset()
-sensor.set_auto_exposure(False)
+
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
-sensor.skip_frames(time = 2000)
+sensor.set_auto_exposure(False)
 sensor.set_auto_gain(False) # must be turned off for color tracking
 sensor.set_auto_whitebal(False) # must be turned off for color tracking
+sensor.skip_frames(time = 2000)
 clock = time.clock()
 
 # Only blobs that with more pixels than "pixel_threshold" and more area than "area_threshold" are
@@ -28,13 +32,18 @@ def angle(ball):
     else:
         px = ball.cx() - 160
         return px * .22125
-    
+
+
+stream = False
+
 while(True):
     clock.tick()
     img = sensor.snapshot()
+    ball_angle = 0
+    tracking_ball = False
     ball = None
 
-    for blob in img.find_blobs([(65, 100, -20, 20, 50, 95)], pixels_threshold=100, area_threshold=100, merge=True):
+    for blob in img.find_blobs([(30, 100, -50, 20, 35, 75)], pixels_threshold=100, area_threshold=100, merge=True):
         # These values depend on the blob not being circular - otherwise they will be shaky.
         if (ball == None ):
             ball = blob
@@ -47,7 +56,33 @@ while(True):
     # Note - the blob rotation is unique to 0-180 only.
     if ( ball != None ):
         img.draw_rectangle(ball.rect(), (0,0,255))
-        print (angle(ball))
-        
+        ball_angle = (angle(ball))
+        tracking_ball = True
+    print( tracking_ball)
 
 
+    # \/ \/ USB CODE \/ \/
+    ticks = time.ticks()
+    if stream:
+        img.copy(x_scale=.25,y_scale=.25,copy_to_fb=True)
+        img.compress(88) #90
+
+    cmd = usb.recv(2, timeout=1000) # Change this to match the number of commands received
+    if not cmd:
+        continue
+    if cmd[0] == b's'[0] and stream:
+        usb.send(ustruct.pack(">LLL", tracking_ball , ball_angle , img.size()))
+        usb.send(img)
+    else:
+        usb.send(ustruct.pack(">LLL", tracking_ball , ball_angle , 0))
+        if cmd[0] == b's'[0]:
+            stream = True
+        else:
+            stream = False
+
+
+    if cmd[1] == b'r'[0]:
+        pyb.LED(1).toggle()
+    if cmd[1] == b'g'[0]:
+        pyb.LED(2).toggle()
+    # /\ /\ USB CODE /\ /\
