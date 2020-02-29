@@ -100,6 +100,36 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+//When the B button on the Xbox controller is pressed, a new command will be run which moves the hopper
+//backwards for (Insert time) in order to free up space for spinning the motor which happens after
+//because of the .andThen command. After it is shown that the shooter speed is true, it will move the
+//hopper forward and into the shooter, firing the balls.
+new JoystickButton(m_controller, Button.kB.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportBackward(), m_hoppersubsystem).withTimeout(0.3)
+        .andThen(new ShooterSpeedReached(),(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem))));
+
+
+new JoystickButton(m_opperator, Button.kStickLeft.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem)
+        .alongWith
+        (new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
+
+
+//This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
+    new JoystickButton(m_opperator, Button.kA.value)
+    .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
+    .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0,0));
+//This code if for shooting balls for high goal from fixed position(need testing for values)
+new JoystickButton(m_opperator, Button.kY.value)
+    .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
+    .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
+//This code is for un-jamming the hopper
+new JoystickButton(m_opperator, Button.kB.value)
+    .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
+    .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
+
+
+/*
 //This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
     new JoystickButton(m_opperator, Button.kA.value)
         .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(0.3,0.3))
@@ -137,6 +167,8 @@ new JoystickButton(m_opperator, Button.kStickLeft.value)
         .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem)
         .alongWith
         (new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
+
+ */       
 }
 
   /**
