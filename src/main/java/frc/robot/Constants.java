@@ -20,7 +20,7 @@ public final class Constants {
 	public static final int kTimeoutMs = 30;
 
     public static final class OIConstants {
-        public static final int RightStickX = 4;
+        	public static final int RightStickX = 4;
 				public static final int RightStickY = 5;
 				public static final int RightTrigger = 3;
 				public static final int LeftTrigger = 2;

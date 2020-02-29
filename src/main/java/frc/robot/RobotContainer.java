@@ -61,9 +61,14 @@ public class RobotContainer {
     m_hooksubsystem.setDefaultCommand(
       new RunCommand(() -> m_hooksubsystem.level(m_opperator.getRawAxis(OIConstants.RightTrigger), m_opperator.getRawAxis(OIConstants.LeftTrigger)), m_hooksubsystem));
 
-    m_drivetrainsubsystem.setDefaultCommand(
-      new Drivetrain(m_drivetrainsubsystem, m_controller)
-    );
+  //  m_drivetrainsubsystem.setDefaultCommand(
+//  new Drivetrain(m_drivetrainsubsystem, m_controller)
+ //   );
+ m_drivetrainsubsystem.setDefaultCommand(
+  new RunCommand(() -> m_drivetrainsubsystem.DirectionDeg(m_controller.getRawAxis(OIConstants.RightStickX), m_controller.getRawAxis(OIConstants.RightStickY)), m_drivetrainsubsystem));
+    //  new Drivetrain(m_drivetrainsubsystem, m_controller)
+     //   );
+    
     /*
     m_hoppersubsystem.setDefaultCommand(
       new RunCommand(() -> m_hoppersubsystem.motorStop(), m_hoppersubsystem)
