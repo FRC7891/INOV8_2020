@@ -57,7 +57,7 @@ public void rpsspeed(double rps) {
   SmartDashboard.putNumber("RPS_OUT", 10 * _talon.getSelectedSensorVelocity(PIDConstants.kPIDLoopIdx) / 4096);
   SmartDashboard.putNumber("ERROR", _talon.getClosedLoopError(PIDConstants.kPIDLoopIdx));
 
-  double targetVelocity_UnitsPer100ms = SmartDashboard.getNumber("RPS", 0) * PIDConstants.kSensorUnitsPerRotation / 10;
+  double targetVelocity_UnitsPer100ms = SmartDashboard.getNumber("RPM", 0) * PIDConstants.kSensorUnitsPerRotation / 10;
 			/* 500 RPM in either direction */
 			_talon.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
 
