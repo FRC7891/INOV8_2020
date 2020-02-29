@@ -20,13 +20,9 @@
 # with open("img.jpg", "w") as f:
 #     f.write(img)
 
-import sensor, image, time, ustruct, pyb
+import sensor, image, pin, time, ustruct, pyb
 from pyb import USB_VCP
 
-DBG=True
-
-
-usb = USB_VCP()
 sensor.reset()                      # Reset and initialize the sensor.
 sensor.set_pixformat(sensor.RGB565) # Set pixel format to RGB565 (or GRAYSCALE)
 sensor.set_framesize(sensor.QVGA)   # Set frame size to QVGA (320x240)
@@ -39,6 +35,11 @@ sensor.set_saturation( +3 ) #-3 +3
 sensor.skip_frames(time = 1000)
 
 
+DBG = True
+
+pin = Pin('P0', Pin.OUT_OD)
+usb = USB_VCP()
+
 imgMs = 0
 usbMs = 0
 stream = True
@@ -46,7 +47,6 @@ stream = True
 
 while (True):
     ticks = time.ticks()
-    pyb.LED(3).toggle()
     img = sensor.snapshot()
     cnt = 0
     for blob in img.find_blobs([(10,100, 50,70, 40,70)], pixels_threshold=120, area_threshold=100, merge=True):
@@ -69,10 +69,10 @@ while (True):
     if not cmd:
         continue
     if cmd[0] == b's'[0] and stream:
-        usb.send(ustruct.pack(">LLL", imgMs, usbMs, img.size()))
+        usb.send(ustruct.pack(">lll", imgMs, usbMs, img.size()))
         usb.send(img)
     else:
-        usb.send(ustruct.pack(">LLL", imgMs, usbMs, 0))
+        usb.send(ustruct.pack(">lll", imgMs, usbMs, 0))
         if cmd[0] == b's'[0]:
             stream = True
         else:
@@ -83,6 +83,12 @@ while (True):
         pyb.LED(1).toggle()
     if cmd[1] == b'g'[0]:
         pyb.LED(2).toggle()
+    if cmd[1] == b'b'[0]:
+        pyb.LED(3).toggle()
+    if cmd[1] == b'w'[0]:
+        pin.value(False)
+    else:
+        pin.value(True)
     # /\ /\ USB CODE /\ /\
 
     #print('{} {}'.format(imgMs,usbMs))

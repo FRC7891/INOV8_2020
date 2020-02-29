@@ -2,13 +2,14 @@
 #BALL SLURPER
 # This example shows off single color RGB565 tracking using the OpenMV Cam.
 
-import sensor, image, time, math,ustruct, pyb
+import sensor, pin, image, time, math, ustruct, pyb
 from pyb import USB_VCP
 
 DBG=True
 
 
 usb = USB_VCP()
+pin = Pin('P0', Pin.OUT_OD)
 
 # Color Tracking Thresholds (L Min, L Max, A Min, A Max, B Min, B Max)
 # The below thresholds track in general red/green/blue things. You may wish to tune them...
@@ -17,7 +18,7 @@ sensor.reset()
 
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
-sensor.set_auto_exposure(False)
+sensor.set_auto_exposure(False, 5000)
 sensor.set_auto_gain(False) # must be turned off for color tracking
 sensor.set_auto_whitebal(False) # must be turned off for color tracking
 sensor.skip_frames(time = 2000)
@@ -40,6 +41,7 @@ while(True):
     clock.tick()
     img = sensor.snapshot()
     ball_angle = 0
+    ball_dist = 0
     tracking_ball = False
     ball = None
 
@@ -71,10 +73,10 @@ while(True):
     if not cmd:
         continue
     if cmd[0] == b's'[0] and stream:
-        usb.send(ustruct.pack(">LLL", tracking_ball , ball_angle , img.size()))
+        usb.send(ustruct.pack(">llll", tracking_ball , ball_angle , ball_dist, img.size()))
         usb.send(img)
     else:
-        usb.send(ustruct.pack(">LLL", tracking_ball , ball_angle , 0))
+        usb.send(ustruct.pack(">llll", tracking_ball , ball_angle , ball_dist, 0))
         if cmd[0] == b's'[0]:
             stream = True
         else:
@@ -85,4 +87,8 @@ while(True):
         pyb.LED(1).toggle()
     if cmd[1] == b'g'[0]:
         pyb.LED(2).toggle()
+    if cmd[1] == b'w'[0]:
+        pin.value(False)
+    else:
+        pin.value(True)
     # /\ /\ USB CODE /\ /\

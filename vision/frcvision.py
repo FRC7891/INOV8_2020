@@ -263,7 +263,7 @@ def OpenMV(prefix, arrIn, arrOut, cs, camera):
             ser.close()
             continue
 
-        for i, v in enumerate(struct.unpack('>' + 'L' * len(arrOut), arr)):
+        for i, v in enumerate(struct.unpack('>' + 'l' * len(arrOut), arr)):
             if arrOut[i] == 'JpegSize':
                 jpegSize = v
             NetworkTablesInstance.getDefault().getTable(prefix).putNumber(arrOut[i], v)
@@ -339,7 +339,7 @@ if __name__ == "__main__":
         args=
         ('Ball',
          ['Img', 'Light'],
-         ['Tracking', 'Angle', 'JpegSize'],
+         ['Tracking', 'Angle', 'Distance', 'JpegSize'],
          cs, '/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0'
          ),  #'/dev/ttyACM0'
         daemon=True).start()
