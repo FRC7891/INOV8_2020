@@ -257,10 +257,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		MotorR2.follow(MotorR1);
 	}
 
-	public void DirectionDeg(double RightstickX, double RightstickY) {
-		if( RightstickY >= 0 && RightstickX < 0)
-			SmartDashboard.putNumber("Degree", Math.toDegrees(Math.atan2(RightstickY, RightstickX)) - 270);
-    else
-		  SmartDashboard.putNumber("Degree", Math.toDegrees(Math.atan2(RightstickY, RightstickX)) + 90);
+	public double DirectionDeg(double RightstickX, double RightstickY) {
+		if (RightstickY >= 0 && RightstickX < 0)
+			return (Math.toDegrees(Math.atan2(RightstickY, RightstickX)) - 270);
+		else
+			return (Math.toDegrees(Math.atan2(RightstickY, RightstickX)) + 90);
 	}
 }
