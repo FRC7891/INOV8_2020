@@ -142,17 +142,14 @@ public void topShooterPID() {
 
   @Override
   public void periodic() {
-    /*
+
+    //Insert a variable here for rpms value(Probably get the value from encoders?? Add if statement or something to see if desired value
+    //testing is needed for such though)
+    final double rpms = 0;
     
-    topPercent = SmartDashboard.getNumber("topMotor%", 0);
-    botPercent = SmartDashboard.getNumber("botMotor%", 0);
+    topPercent = SmartDashboard.getNumber("topMotorRPM", rpms);
+    botPercent = SmartDashboard.getNumber("botMotorRPM", rpms);
     
-    topMotor.set(ControlMode.PercentOutput, -topPercent);
-    botMotor.set(ControlMode.PercentOutput, botPercent);
-    
-    // This method will be called once per scheduler run
-    
-    */
   }
   //Charlie, change this. I am just using this as a placeholder until you're done
   public void sliderValueFunction() {
