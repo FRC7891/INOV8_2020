@@ -145,10 +145,13 @@ public void topShooterPID() {
 
     //Insert a variable here for rpms value(Probably get the value from encoders?? Add if statement or something to see if desired value
     //testing is needed for such though)
-    final double rpms = 0;
+    final double topRPMS = topMotor.getSelectedSensorVelocity();
+    final double botRPMS = botMotor.getSelectedSensorVelocity();
+    double currentVelocityTop = topRPMS * ShooterConstants.kSensorUnitsPerRotation / 600;
+    double currentVelocityBot = botRPMS * ShooterConstants.kSensorUnitsPerRotation / 600;
     
-    topPercent = SmartDashboard.getNumber("topMotorRPM", rpms);
-    botPercent = SmartDashboard.getNumber("botMotorRPM", rpms);
+    topPercent = SmartDashboard.getNumber("topMotorRPM", currentVelocityTop);
+    botPercent = SmartDashboard.getNumber("botMotorRPM", currentVelocityBot);
     
   }
   //Charlie, change this. I am just using this as a placeholder until you're done
