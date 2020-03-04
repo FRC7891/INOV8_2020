@@ -1,3 +1,9 @@
+
+#
+
+
+
+
 # Single Color RGB565 Blob Tracking Example
 #BALL SLURPER
 # This example shows off single color RGB565 tracking using the OpenMV Cam.
@@ -23,7 +29,7 @@ sensor.set_auto_gain(False) # must be turned off for color tracking
 sensor.set_auto_whitebal(False) # must be turned off for color tracking
 sensor.skip_frames(time = 2000)
 clock = time.clock()
-
+#Use the Force Luke is a value that tells the computer if ROBOTO is tracking a ball.
 # Only blobs that with more pixels than "pixel_threshold" and more area than "area_threshold" are
 # returned by "find_blobs" below. Change "pixels_threshold" and "area_threshold" if you change the
 # camera resolution. "merge=True" merges all overlapping blobs in the image.
@@ -32,7 +38,7 @@ def angle(ball):
         return  0
     else:
         px = ball.cx() - 160
-        return px * .22125
+        return int(px * .22125)
 
 
 stream = True
@@ -41,24 +47,27 @@ while(True):
     clock.tick()
     img = sensor.snapshot()
     ball_angle = 0
-    tracking_ball = 0
+    use_the_force_luke = 0
     ball = None
     ball_distance = 0
     for blob in img.find_blobs([(45, 100, -27, 6, 41, 127)], pixels_threshold=100, area_threshold=100, merge=True):
         # These values depend on the blob not being circular - otherwise they will be shaky.
         if (ball == None ):
             ball = blob
-
-        elif( blob.cy() > ball.cy() ):
+        elif ((( ball.cy() * 5 ) - abs(ball.cx() - 200)) <   ((( blob.cy() * 5 ) -  abs(blob.cx() - 200)))):
             ball = blob
+
+
+
+
         # These values are stable all the time.
         if (stream):
             img.draw_rectangle(blob.rect())
-            img.draw_cross(blob.cx(), blob.cy())
+            (blob.cx(), blob.cy())
         # Note - the blob rotation is unique to 0-180 only.
     if ( ball != None ):
         ball_angle = (angle(ball))
-        tracking_ball = 1
+        use_the_force_luke = 1
         if (stream):
             img.draw_rectangle(ball.rect(), (0,0,255))
 
@@ -72,10 +81,10 @@ while(True):
     if not cmd:
         continue
     if cmd[0] == b's'[0] and stream:
-        usb.send(ustruct.pack(">llll", tracking_ball , ball_angle , ball_distance , img.size()))
+        usb.send(ustruct.pack(">llll", use_the_force_luke , ball_angle , ball_distance , img.size()))
         usb.send(img)
     else:
-        usb.send(ustruct.pack(">llll", tracking_ball , ball_angle , ball_distance , 0 ))
+        usb.send(ustruct.pack(">llll", use_the_force_luke , ball_angle , ball_distance , 0 ))
         if cmd[0] == b's'[0]:
             stream = True
         else:
@@ -89,6 +98,6 @@ while(True):
     if cmd[1] == b'w'[0]:
         pin.value(True)
     else:
-        pin.value(False)                                  
+        pin.value(False)
            # /\ /\ USB CODE /\ /\
     # /\ /\ USB CODE /\ /\
