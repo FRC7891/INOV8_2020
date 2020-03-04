@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class Drivetrain extends CommandBase {
@@ -33,8 +34,8 @@ public class Drivetrain extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double leftstickY = m_driverController.getRawAxis(DriveTrainConstants.LeftStickY);
-    double rightstickX = m_driverController.getRawAxis(DriveTrainConstants.RightStickX);
+    double leftstickY = m_driverController.getRawAxis(OIConstants.LeftStickY);
+    double rightstickX = m_driverController.getRawAxis(OIConstants.RightStickX);
  
     m_drivetrainsubsystem.setLeftMotors(leftstickY - rightstickX);
     m_drivetrainsubsystem.setRightMotors(leftstickY + rightstickX);

@@ -19,6 +19,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.Drivetrain;
 import frc.robot.commands.PIDDrivetrain;
 import frc.robot.commands.ShooterSpeedReached;
+import frc.robot.commands.TurnyBoiTheSequal;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HookSubsystem;
@@ -61,9 +62,14 @@ public class RobotContainer {
     m_hooksubsystem.setDefaultCommand(
       new RunCommand(() -> m_hooksubsystem.level(m_opperator.getRawAxis(OIConstants.RightTrigger), m_opperator.getRawAxis(OIConstants.LeftTrigger)), m_hooksubsystem));
 
-    m_drivetrainsubsystem.setDefaultCommand(
-      new Drivetrain(m_drivetrainsubsystem, m_controller)
-    );
+  //  m_drivetrainsubsystem.setDefaultCommand(
+//  new Drivetrain(m_drivetrainsubsystem, m_controller)
+ //   );
+ m_drivetrainsubsystem.setDefaultCommand(
+  new RunCommand(() -> m_drivetrainsubsystem.DirectionDeg(m_controller.getRawAxis(OIConstants.RightStickX), m_controller.getRawAxis(OIConstants.RightStickY)), m_drivetrainsubsystem));
+    //  new Drivetrain(m_drivetrainsubsystem, m_controller)
+     //   );
+    
     /*
     m_hoppersubsystem.setDefaultCommand(
       new RunCommand(() -> m_hoppersubsystem.motorStop(), m_hoppersubsystem)
@@ -127,7 +133,10 @@ new JoystickButton(m_opperator, Button.kY.value)
 new JoystickButton(m_opperator, Button.kB.value)
     .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
     .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
-
+  // this is for the quick turn function
+new JoystickButton(m_opperator, Button.kStickLeft.value)
+    .whileHeld(() -> new TurnyBoiTheSequal(m_drivetrainsubsystem, m_controller));
+    
 
 /*
 //This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
