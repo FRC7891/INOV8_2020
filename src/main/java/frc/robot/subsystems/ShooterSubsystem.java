@@ -88,6 +88,10 @@ botShooterPID();
     botMotor.configAuxPIDPolarity(false, ShooterConstants.kTimeoutMs);
 }
 
+public Object shooterPID(){
+  return true;
+}
+
 public void topShooterPID() {
 
       /* Disable all motor controllers */
@@ -168,7 +172,6 @@ public void topShooterPID() {
 
 
   public void ballMovingFunction(double top, double bot) {
-
     topMotor.set(ControlMode.PercentOutput, -top);
     botMotor.set(ControlMode.PercentOutput, bot);
 
@@ -185,11 +188,7 @@ public void topShooterPID() {
       double botTargetVelocity_UnitsPer100ms = botRPM * ShooterConstants.kSensorUnitsPerRotation / 600;
        /* 500 RPM in either direction */
       botMotor.set(ControlMode.Velocity, botTargetVelocity_UnitsPer100ms);
-  
-  }
-  //Charlie I need this done
-  //More logic required for encoders
-  public boolean speedReached(){
-    return(true);
+
+      
   }
 }
