@@ -46,19 +46,19 @@ botShooterPID();
     botMotor.configFactoryDefault();
     
     /* Set Neutral Mode */
-    botMotor.setNeutralMode(NeutralMode.Brake);
+    botMotor.setNeutralMode(NeutralMode.Coast);
     
     
     /* Configure output and sensor direction */
-    botMotor.setInverted(true);
-    botMotor.setSensorPhase(true);
+    botMotor.setSensorPhase(false);
+    botMotor.setInverted(false);
     
     /**
      * Max out the peak output (for all modes).  
      * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
      */
-    botMotor.configPeakOutputForward(+1.0, ShooterConstants.kTimeoutMs);
-    botMotor.configPeakOutputReverse(-1.0, ShooterConstants.kTimeoutMs);
+    botMotor.configPeakOutputForward(1.0, ShooterConstants.kTimeoutMs);
+    botMotor.configPeakOutputReverse(0, ShooterConstants.kTimeoutMs);
 
     /* FPID Gains for velocity servo */
     botMotor.config_kP(ShooterConstants.kSlot_Velocit, ShooterConstants.kGains_Velocit.kP, ShooterConstants.kTimeoutMs);
@@ -101,19 +101,19 @@ public void topShooterPID() {
       topMotor.configFactoryDefault();
       
       /* Set Neutral Mode */
-      topMotor.setNeutralMode(NeutralMode.Brake);
+      topMotor.setNeutralMode(NeutralMode.Coast);
       
       
       /* Configure output and sensor direction */
+      topMotor.setSensorPhase(false);
       topMotor.setInverted(true);
-      topMotor.setSensorPhase(true);
       
       /**
        * Max out the peak output (for all modes).  
        * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
        */
       topMotor.configPeakOutputForward(+1.0, ShooterConstants.kTimeoutMs);
-      topMotor.configPeakOutputReverse(-1.0, ShooterConstants.kTimeoutMs);
+      topMotor.configPeakOutputReverse(0, ShooterConstants.kTimeoutMs);
   
       /* FPID Gains for velocity servo */
       topMotor.config_kP(ShooterConstants.kSlot_Velocit, ShooterConstants.kGains_Velocit.kP, ShooterConstants.kTimeoutMs);
@@ -184,14 +184,21 @@ public void topShooterPID() {
   public void ballMovingPID(double topRPM, double botRPM) {
 
 //Top motor PID
+if (topRPM != 0) { 
       double topTargetVelocity_UnitsPer100ms = topRPM * ShooterConstants.kSensorUnitsPerRotation / 600;
           /* 500 RPM in either direction */
           topMotor.set(ControlMode.Velocity, topTargetVelocity_UnitsPer100ms);
-
+                 } else {
+                   topMotor.set(ControlMode.PercentOutput, 0);
+                 }
 //Bottom motor PID
+if (botRPM != 0) {
       double botTargetVelocity_UnitsPer100ms = botRPM * ShooterConstants.kSensorUnitsPerRotation / 600;
        /* 500 RPM in either direction */
       botMotor.set(ControlMode.Velocity, botTargetVelocity_UnitsPer100ms);
+                } else {
+                  botMotor.set(ControlMode.PercentOutput, 0);
+                }
   
   }
   //Charlie I need this done
