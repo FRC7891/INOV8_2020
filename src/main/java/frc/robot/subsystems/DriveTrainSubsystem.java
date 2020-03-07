@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -36,8 +37,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
 	public DriveTrainSubsystem() {
 
-		MotorR1.configOpenloopRamp(0.9, 0);
-		MotorL1.configOpenloopRamp(0.9, 0);
+		// MotorR1.configOpenloopRamp(0.9, 0); //For thing just ask Braden
+		// MotorL1.configOpenloopRamp(0.9, 0);
 		// Invert Directions for Left and Right
 		TalonFXInvertType _leftInvert = TalonFXInvertType.CounterClockwise; // Same as invert = "false"
 		TalonFXInvertType _rightInvert = TalonFXInvertType.Clockwise; // Same as invert = "true"
@@ -49,10 +50,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		// * Set Neutral Mode */
 		MotorL1.setNeutralMode(NeutralMode.Brake);
 		MotorR1.setNeutralMode(NeutralMode.Brake);
+		MotorL2.setNeutralMode(NeutralMode.Brake);
+		MotorR1.setNeutralMode(NeutralMode.Brake);
 
 		// * Configure output and sensor direction */
 		MotorL1.setInverted(_leftInvert);
 		MotorR1.setInverted(_rightInvert);
+		MotorL2.setInverted(_leftInvert);
+		MotorR2.setInverted(_rightInvert);
 
 		// * Reset Pigeon Configs */
 		_pidgey.configFactoryDefault();
@@ -85,14 +90,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		// ** Heading Configs */
 		_rightConfig.remoteFilter1.remoteSensorDeviceID = _pidgey.getDeviceID(); // Pigeon Device ID
 		_rightConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw; // This is for a Pigeon over CAN
-		_rightConfig.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor1; // Set as the Aux Sensor
-		_rightConfig.auxiliaryPID.selectedFeedbackCoefficient = 3600.0 / DriveTrainConstants.kPigeonUnitsPerRotation; // Convert
-																														// Yaw
-																														// to
-																														// tenths
-																														// of
-																														// a
-																														// degree
+		_rightConfig.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();
+		_rightConfig.auxiliaryPID.selectedFeedbackCoefficient = 3600.0 / DriveTrainConstants.kPigeonUnitsPerRotation;
 
 		// * false means talon's local output is PID0 + PID1, and other side Talon is
 		// PID0 - PID1
@@ -111,8 +110,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		_rightConfig.slot1.closedLoopPeakOutput = DriveTrainConstants.kGains_Turning.kPeakOutput;
 
 		// * Config the neutral deadband. */
-		_leftConfig.neutralDeadband = DriveTrainConstants.kNeutralDeadband;
-		_rightConfig.neutralDeadband = DriveTrainConstants.kNeutralDeadband;
+		// _leftConfig.neutralDeadband = DriveTrainConstants.kNeutralDeadband; //another
+		// thing to just ask Braden
+		// _rightConfig.neutralDeadband = DriveTrainConstants.kNeutralDeadband;
 
 		// **
 		// * 1ms per loop. PID loop can be slowed down if need be.
@@ -134,6 +134,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		// * APPLY the config settings */
 		MotorL1.configAllSettings(_leftConfig);
 		MotorR1.configAllSettings(_rightConfig);
+
+		MotorR1.configMotionSCurveStrength(8);
 
 		// * Set status frame periods to ensure we don't have stale data */
 		// * These aren't configs (they're not persistant) so we can set these after the
@@ -247,7 +249,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	}
 
 	public void Quickturn(double angle) {
-		SensorTurnValue = ((SensorTurnValue - (SensorTurnValue % 3600)) + angle);
+		SensorTurnValue = (SensorTurnValue + angle);
 		/*
 		 * Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon
 		 */
@@ -258,9 +260,23 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	}
 
 	public double DirectionDeg(double RightstickX, double RightstickY) {
-		if (RightstickY >= 0 && RightstickX < 0)
-			return (Math.toDegrees(Math.atan2(RightstickY, RightstickX)) - 270);
+		if (Math.abs(RightstickX) < .5 || Math.abs(RightstickY) < .5)
+			return -1;
+		else if (RightstickY < 0 && RightstickX < 0)
+			return ((Math.toDegrees(Math.atan2(RightstickY, RightstickX)) + 450) * 10);
 		else
-			return (Math.toDegrees(Math.atan2(RightstickY, RightstickX)) + 90);
+			return ((Math.toDegrees(Math.atan2(RightstickY, RightstickX)) + 90) * 10);
+	}
+
+	public double TurnyBoi(double Final) {
+		if (Final == -1)
+			return 0;
+		double Remainder = (SensorTurnValue - 3600);
+		double Turn = (Final + Remainder);
+		double TurnValue = ((Turn) % 3600);
+		if (TurnValue > 1800)
+			return ((3600 - TurnValue) * -1);
+		else
+			return (TurnValue);
 	}
 }
