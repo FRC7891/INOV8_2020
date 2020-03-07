@@ -121,7 +121,7 @@ new JoystickButton(m_opperator, Button.kStickLeft.value)
 
 
 //This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
-    new JoystickButton(m_opperator, Button.kA.value)
+new JoystickButton(m_opperator, Button.kA.value)
     .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
     .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0,0));
 //This code if for shooting balls for high goal from fixed position(need testing for values)

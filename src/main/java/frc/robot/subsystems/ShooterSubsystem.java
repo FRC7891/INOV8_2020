@@ -86,6 +86,10 @@ botShooterPID();
      * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
      */
     botMotor.configAuxPIDPolarity(false, ShooterConstants.kTimeoutMs);
+
+    //Set PID slot to 2
+    botMotor.selectProfileSlot(ShooterConstants.kSlot_Velocit, ShooterConstants.PID_PRIMARY);
+
 }
 
 public void topShooterPID() {
@@ -137,6 +141,9 @@ public void topShooterPID() {
        * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
        */
       topMotor.configAuxPIDPolarity(false, ShooterConstants.kTimeoutMs);
+
+      //Setting PID slot to 2
+      topMotor.selectProfileSlot(ShooterConstants.kSlot_Velocit, ShooterConstants.PID_PRIMARY);
 }
 
 
