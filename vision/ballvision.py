@@ -55,7 +55,7 @@ while(True):
         # These values depend on the blob not being circular - otherwise they will be shaky.
         if (ball == None ):
             ball = blob
-        elif ((( ball.cy() * 5 ) - abs(ball.cx() - 200)) <   ((( blob.cy() * 5 ) -  abs(blob.cx() - 200)))):
+        elif ((( ball.cy() * 5 ) - abs(ball.cx() - 160)) <   ((( blob.cy() * 5 ) -  abs(blob.cx() - 160)))):
             ball = blob
 
 
