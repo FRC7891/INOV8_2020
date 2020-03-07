@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import jdk.nashorn.internal.ir.ThrowNode;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -25,9 +26,11 @@ public class ShooterSubsystem extends SubsystemBase {
   public double botPercent = 0; 
   public double topPID = 0;
   public double botPID = 0;
+  public String velocityCheck = "nil";
 
   public ShooterSubsystem() {
 
+ SmartDashboard.setDefaultString("velocityCheck", "nil");
  SmartDashboard.setDefaultNumber("topMotor%", 0);
  SmartDashboard.setDefaultNumber("botMotor%", 0);
  SmartDashboard.setDefaultNumber("topPID", 0);
@@ -173,6 +176,14 @@ public void topShooterPID() {
 
   };
 
+  public void velocityCheck(double vel) {
+      velocityCheck = SmartDashboard.getString("velocity", "nil");
+      if (vel == 0) {
+        SmartDashboard.putString("velocity", "No Velocity");
+                    }
+        else
+      {SmartDashboard.putString("velocity", "Moving");}
+  }
 
   public void ballMovingFunction(double top, double bot) {
 
