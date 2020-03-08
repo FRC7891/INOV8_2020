@@ -80,7 +80,7 @@ public final class Constants {
 		public final static Gains kGains_Turning = new Gains(2.0, 0.0, 4.0, 0.0, 200, 1.00);
 
 		// The velocity PID for shooter
-		public final static Gains kGains_Velocit = new Gains(0.048, 0.0, 0.50, .7, 300, 0.50);
+		public final static Gains kGains_Velocit = new Gains(0.065, 0.0, 0.2, .7, 300, 1.0);
 
 		public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
 
@@ -124,8 +124,8 @@ public final class Constants {
 		public static final int MotorL2ID = 3;
 		public static final int MotorR2ID = 4;
 
-		public static final double SpeedL = .4;
-		public static final double SpeedR = .4;
+		public static final double SpeedL = .8;
+		public static final double SpeedR = .8;
 
 		// PID Gains kP kI kD kF kI kZ
 		public final static Gains kGains_Distanc = new Gains(0.3, 0.0, 0.0, 0.0, 100, 0.50);
@@ -184,7 +184,7 @@ public final class Constants {
 
 		// pidgeon ID
 		public final static int PidgeonID = 15;
-		public static double turn_rate = 100;
+		public static double turn_rate = 50;
 	}
 
 	public static class PIDConstants {
