@@ -7,10 +7,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 //import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -190,9 +192,10 @@ new JoystickButton(m_operator, Button.kA.value)
 //I'll just put the override mode on the interface
 //I'll need to define shooterPID. Right now it just returns true
 //Please remove the print text. Im really tired right now, and I dont want to
+/*
 new JoystickButton(m_controller, Button.kBumperRight.value)
         .whenPressed(new ConditionalCommand(m_hoppersubsystem.transportForward(), print("I can't do that yet"),
-        shooterPID.ShooterSubsystem::get));
+        ShooterSubsystem.botShooterPID::get));
 
 /*
 new JoystickButton(m_operator, Button.kStickLeft.value)
@@ -201,6 +204,13 @@ new JoystickButton(m_operator, Button.kStickLeft.value)
         (new RunCommand(() -> m_IntakeSubsystem.suck(m_operator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
 */
 }
+
+
+  public class Container {
+    private NetworkTableInstance nt = NetworkTableInstance.getDefault();
+    private SendableChooser<Command> autonomousModeChooser;
+    Joystick m_controller = new Joystick(0);
+  }
 
   private Command print(String string) {
     return null;
@@ -211,8 +221,15 @@ new JoystickButton(m_operator, Button.kStickLeft.value)
    *
    * @return the command to run in autonomous
    */
+  /*
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
+    return (Command) autonomousModeChooser.getSelected();
+  }
+
   }
 }
+  public Command getAutonomousCommand() {
+    return (Command) autonomousModeChooser.getSelected();
+  }
+}
+*/
