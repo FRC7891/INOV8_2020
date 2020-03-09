@@ -26,7 +26,6 @@ public class HopperSubsystem extends SubsystemBase {
     motor2.set(ControlMode.PercentOutput, HopperConstants.forwardspeed);
 
   }
-<<<<<<< HEAD
   //Did I do this right Pascal???
   public void ballJerkBackward() {
 
@@ -37,8 +36,6 @@ public class HopperSubsystem extends SubsystemBase {
   }
   
   
-=======
->>>>>>> 7554095d6336b4b90ac3c94bf95646fe71fa043b
 
   public void transportBackward() {
 
