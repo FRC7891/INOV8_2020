@@ -9,22 +9,24 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.HopperConstants;
 
 public class HopperSubsystem extends SubsystemBase {
-  
+
   public final TalonSRX motor2 = new TalonSRX(HopperConstants.Motor2ID);
+
   public HopperSubsystem() {
 
   }
+
   public void transportForward() {
 
     motor2.set(ControlMode.PercentOutput, HopperConstants.forwardspeed);
 
   }
+<<<<<<< HEAD
   //Did I do this right Pascal???
   public void ballJerkBackward() {
 
@@ -35,24 +37,26 @@ public class HopperSubsystem extends SubsystemBase {
   }
   
   
+=======
+>>>>>>> 7554095d6336b4b90ac3c94bf95646fe71fa043b
 
   public void transportBackward() {
 
     motor2.set(ControlMode.PercentOutput, HopperConstants.backwardspeed);
 
-}
+  }
 
-public void motorStop() {
+  public void motorStop() {
     motor2.set(ControlMode.PercentOutput, 0);
 
-}
+  }
 
-public Object TransportForward(double rawAxis) {
-  return null;
+  public Object TransportForward(double rawAxis) {
+    return null;
 
-}
+  }
 
-public void spin(double speed) {
-  motor2.set(ControlMode.PercentOutput, speed*0.4);
-}
+  public void spin(double speed) {
+    motor2.set(ControlMode.PercentOutput, speed * 0.4);
+  }
 }
