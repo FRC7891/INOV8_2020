@@ -120,6 +120,10 @@ new JoystickButton(m_opperator, Button.kStickLeft.value)
         .alongWith
         (new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
 
+//This code is for bring balls back a slight bit. Needs what ever value up is on the d-pad.
+new JoystickButton(m_opperator, )
+.whenPressed(() -> m_hoppersubsystem.ballJerkBackward());
+
 
 //This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
 new JoystickButton(m_opperator, Button.kA.value)

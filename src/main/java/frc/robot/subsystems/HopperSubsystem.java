@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.HopperConstants;
 
 public class HopperSubsystem extends SubsystemBase {
@@ -25,13 +26,16 @@ public class HopperSubsystem extends SubsystemBase {
 
   }
   //Did I do this right Pascal???
-  public void ballJerkBackward() throws InterruptedException {
+  public void ballJerkBackward() {
 
   motor2.set(ControlMode.PercentOutput, HopperConstants.jerkSpeed);
   wait(1);
   motor2.set(ControlMode.PercentOutput, 0);
 
   }
+  
+  
+
   public void transportBackward() {
 
     motor2.set(ControlMode.PercentOutput, HopperConstants.backwardspeed);
