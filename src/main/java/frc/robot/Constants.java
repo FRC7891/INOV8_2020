@@ -38,6 +38,7 @@ public final class Constants {
 		public static final int Motor2ID = 8;
 		public static double forwardspeed = 0.1;
 		public static double backwardspeed = -0.1;
+		public static double jerkSpeed = -.1;
 	}
 
 	public static final class ShooterConstants {

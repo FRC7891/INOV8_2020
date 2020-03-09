@@ -24,6 +24,14 @@ public class HopperSubsystem extends SubsystemBase {
     motor2.set(ControlMode.PercentOutput, HopperConstants.forwardspeed);
 
   }
+  //Did I do this right Pascal???
+  public void ballJerkBackward() throws InterruptedException {
+
+  motor2.set(ControlMode.PercentOutput, HopperConstants.jerkSpeed);
+  wait(1);
+  motor2.set(ControlMode.PercentOutput, 0);
+
+  }
   public void transportBackward() {
 
     motor2.set(ControlMode.PercentOutput, HopperConstants.backwardspeed);
