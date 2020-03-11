@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import jdk.nashorn.internal.ir.ThrowNode;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -25,9 +26,11 @@ public class ShooterSubsystem extends SubsystemBase {
   public double botPercent = 0; 
   public double topPID = 0;
   public double botPID = 0;
+  public String velocityCheck = "nil";
 
   public ShooterSubsystem() {
 
+ SmartDashboard.setDefaultString("velocityCheck", "nil");
  SmartDashboard.setDefaultNumber("topMotor%", 0);
  SmartDashboard.setDefaultNumber("botMotor%", 0);
  SmartDashboard.setDefaultNumber("topPID", 0);
@@ -46,19 +49,19 @@ botShooterPID();
     botMotor.configFactoryDefault();
     
     /* Set Neutral Mode */
-    botMotor.setNeutralMode(NeutralMode.Brake);
+    botMotor.setNeutralMode(NeutralMode.Coast);
     
     
     /* Configure output and sensor direction */
-    botMotor.setInverted(true);
-    botMotor.setSensorPhase(true);
+    botMotor.setSensorPhase(false);
+    botMotor.setInverted(false);
     
     /**
      * Max out the peak output (for all modes).  
      * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
      */
-    botMotor.configPeakOutputForward(+1.0, ShooterConstants.kTimeoutMs);
-    botMotor.configPeakOutputReverse(-1.0, ShooterConstants.kTimeoutMs);
+    botMotor.configPeakOutputForward(1.0, ShooterConstants.kTimeoutMs);
+    botMotor.configPeakOutputReverse(0, ShooterConstants.kTimeoutMs);
 
     /* FPID Gains for velocity servo */
     botMotor.config_kP(ShooterConstants.kSlot_Velocit, ShooterConstants.kGains_Velocit.kP, ShooterConstants.kTimeoutMs);
@@ -86,6 +89,10 @@ botShooterPID();
      * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
      */
     botMotor.configAuxPIDPolarity(false, ShooterConstants.kTimeoutMs);
+
+    //Set PID slot to 2
+    botMotor.selectProfileSlot(ShooterConstants.kSlot_Velocit, ShooterConstants.PID_PRIMARY);
+
 }
 
 public Object shooterPID(){
@@ -101,19 +108,19 @@ public void topShooterPID() {
       topMotor.configFactoryDefault();
       
       /* Set Neutral Mode */
-      topMotor.setNeutralMode(NeutralMode.Brake);
+      topMotor.setNeutralMode(NeutralMode.Coast);
       
       
       /* Configure output and sensor direction */
+      topMotor.setSensorPhase(false);
       topMotor.setInverted(true);
-      topMotor.setSensorPhase(true);
       
       /**
        * Max out the peak output (for all modes).  
        * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
        */
       topMotor.configPeakOutputForward(+1.0, ShooterConstants.kTimeoutMs);
-      topMotor.configPeakOutputReverse(-1.0, ShooterConstants.kTimeoutMs);
+      topMotor.configPeakOutputReverse(0, ShooterConstants.kTimeoutMs);
   
       /* FPID Gains for velocity servo */
       topMotor.config_kP(ShooterConstants.kSlot_Velocit, ShooterConstants.kGains_Velocit.kP, ShooterConstants.kTimeoutMs);
@@ -141,22 +148,25 @@ public void topShooterPID() {
        * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
        */
       topMotor.configAuxPIDPolarity(false, ShooterConstants.kTimeoutMs);
+
+      //Setting PID slot to 2
+      topMotor.selectProfileSlot(ShooterConstants.kSlot_Velocit, ShooterConstants.PID_PRIMARY);
 }
 
 
   @Override
   public void periodic() {
-    /*
+
+    //Insert a variable here for rpms value(Probably get the value from encoders?? Add if statement or something to see if desired value
+    //testing is needed for such though)
+    final double topRPMS = topMotor.getSelectedSensorVelocity();
+    final double botRPMS = botMotor.getSelectedSensorVelocity();
+    double currentVelocityTop = topRPMS * ShooterConstants.kSensorUnitsPerRotation / 600;
+    double currentVelocityBot = botRPMS * ShooterConstants.kSensorUnitsPerRotation / 600;
     
-    topPercent = SmartDashboard.getNumber("topMotor%", 0);
-    botPercent = SmartDashboard.getNumber("botMotor%", 0);
+    topPercent = SmartDashboard.getNumber("topMotorRPM", currentVelocityTop);
+    botPercent = SmartDashboard.getNumber("botMotorRPM", currentVelocityBot);
     
-    topMotor.set(ControlMode.PercentOutput, -topPercent);
-    botMotor.set(ControlMode.PercentOutput, botPercent);
-    
-    // This method will be called once per scheduler run
-    
-    */
   }
   //Charlie, change this. I am just using this as a placeholder until you're done
   public void sliderValueFunction() {
@@ -170,6 +180,14 @@ public void topShooterPID() {
 
   };
 
+  public void velocityCheck(double vel) {
+      velocityCheck = SmartDashboard.getString("velocity", "nil");
+      if (vel == 0) {
+        SmartDashboard.putString("velocity", "No Velocity");
+                    }
+        else
+      {SmartDashboard.putString("velocity", "Moving");}
+  }
 
   public void ballMovingFunction(double top, double bot) {
     topMotor.set(ControlMode.PercentOutput, -top);
@@ -180,15 +198,28 @@ public void topShooterPID() {
   public void ballMovingPID(double topRPM, double botRPM) {
 
 //Top motor PID
+if (topRPM != 0) { 
       double topTargetVelocity_UnitsPer100ms = topRPM * ShooterConstants.kSensorUnitsPerRotation / 600;
           /* 500 RPM in either direction */
           topMotor.set(ControlMode.Velocity, topTargetVelocity_UnitsPer100ms);
-
+                 } else {
+                   topMotor.set(ControlMode.PercentOutput, 0);
+                 }
 //Bottom motor PID
+if (botRPM != 0) {
       double botTargetVelocity_UnitsPer100ms = botRPM * ShooterConstants.kSensorUnitsPerRotation / 600;
        /* 500 RPM in either direction */
       botMotor.set(ControlMode.Velocity, botTargetVelocity_UnitsPer100ms);
 
       
+                } else {
+                  botMotor.set(ControlMode.PercentOutput, 0);
+                }
+  
+  }
+  //Charlie I need this done
+  //More logic required for encoders
+  public boolean speedReached(){
+    return(true);
   }
 }

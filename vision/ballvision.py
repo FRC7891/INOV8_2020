@@ -22,14 +22,15 @@ pin = Pin('P0', Pin.OUT_OD)
 
 sensor.reset()
 
+sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
-sensor.set_auto_exposure(False)
-sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False) # must be turned off for color tracking
 sensor.skip_frames(time = 2000)
+sensor.set_auto_exposure(False,5000)
+sensor.set_auto_gain(False,0,0) # must be turned off for color tracking
+sensor.set_auto_whitebal(False,(0,0,0))
 clock = time.clock()
-#Use the Force Luke is a value that tells the computer if ROBOTO is tracking a ball.
+
 # Only blobs that with more pixels than "pixel_threshold" and more area than "area_threshold" are
 # returned by "find_blobs" below. Change "pixels_threshold" and "area_threshold" if you change the
 # camera resolution. "merge=True" merges all overlapping blobs in the image.
@@ -54,7 +55,7 @@ while(True):
         # These values depend on the blob not being circular - otherwise they will be shaky.
         if (ball == None ):
             ball = blob
-        elif ((( ball.cy() * 5 ) - abs(ball.cx() - 200)) <   ((( blob.cy() * 5 ) -  abs(blob.cx() - 200)))):
+        elif ((( ball.cy() * 5 ) - abs(ball.cx() - 160)) <   ((( blob.cy() * 5 ) -  abs(blob.cx() - 160)))):
             ball = blob
 
 
