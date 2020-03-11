@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
@@ -20,7 +21,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
-import com.ctre.phoenix.sensors.PigeonIMU.FusionStatus;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,16 +51,22 @@ public class DriveTrainSubsystem extends SubsystemBase {
     TalonFXConfiguration _rightConfig = new TalonFXConfiguration();
 
     // * Set Neutral Mode */
-    MotorL1.setNeutralMode(NeutralMode.Brake);
-    MotorR1.setNeutralMode(NeutralMode.Brake);
-    MotorL2.setNeutralMode(NeutralMode.Brake);
-    MotorR1.setNeutralMode(NeutralMode.Brake);
+    MotorL1.setNeutralMode(NeutralMode.Coast);
+    MotorR1.setNeutralMode(NeutralMode.Coast);
+    MotorL2.setNeutralMode(NeutralMode.Coast);
+    MotorR1.setNeutralMode(NeutralMode.Coast);
 
     // * Configure output and sensor direction */
     MotorL1.setInverted(_leftInvert);
     MotorR1.setInverted(_rightInvert);
     MotorL2.setInverted(_leftInvert);
     MotorR2.setInverted(_rightInvert);
+
+    StatorCurrentLimitConfiguration currentConfig = new StatorCurrentLimitConfiguration(true, 25, 30, 100);
+    MotorL1.configStatorCurrentLimit(currentConfig);
+    MotorR1.configStatorCurrentLimit(currentConfig);
+    MotorL2.configStatorCurrentLimit(currentConfig);
+    MotorR2.configStatorCurrentLimit(currentConfig);
 
     // * Reset Pigeon Configs */
     _pidgey.configFactoryDefault();
@@ -230,7 +236,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   public void PIDArcade(double speed, double turn) {
     /* Calculate targets from gamepad inputs */
-    if (speed > 0.1 || speed < -0.1) {
+    if (speed > 0.05 || speed < -0.05) {
       last_speed = speed;
       target_sensorUnits = (speed * DriveTrainConstants.kSensorUnitsPerRotation
           * DriveTrainConstants.kRotationsToTravel)
@@ -244,6 +250,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
       last_speed = 0;
     }
 
+    if (Math.abs(turn) < .05)
+      turn = 0;
     SensorTurnValue += -turn * DriveTrainConstants.turn_rate;
 
     SmartDashboard.putNumber("turn", SensorTurnValue);
@@ -262,6 +270,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   /** Zero all sensors, both Talons and Pigeon */
   public void zeroSensors() {
+    MotorR1.set(ControlMode.PercentOutput, 0);
+    MotorL1.set(ControlMode.PercentOutput, 0);
+    target_sensorUnits = 0;
+    SensorTurnValue = 0;
     MotorL1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     MotorR1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     _pidgey.setYaw(0, DriveTrainConstants.kTimeoutMs);
@@ -271,6 +283,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   /** Zero QuadEncoders, used to reset position when initializing Motion Magic */
   void zeroDistance() {
+    MotorR1.set(ControlMode.PercentOutput, 0);
+    MotorL1.set(ControlMode.PercentOutput, 0);
+    target_sensorUnits = 0;
     MotorL1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     MotorR1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     System.out.println("[Quadrature Encoders] All encoders are zeroed.\n");
@@ -279,7 +294,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   // inches
   public void AutoDist(double dist) {
 
-    target_sensorUnits = (dist / 6 * Math.PI * DriveTrainConstants.kSensorUnitsPerRotation * 10.75)
+    target_sensorUnits = (dist * (DriveTrainConstants.kSensorUnitsPerRotation * 10.75) / 6 * Math.PI)
         + target_sensorUnits;
 
     /*

@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.HopperConstants;
 
 public class HopperSubsystem extends SubsystemBase {
@@ -25,6 +26,16 @@ public class HopperSubsystem extends SubsystemBase {
     motor2.set(ControlMode.PercentOutput, HopperConstants.forwardspeed);
 
   }
+  //Did I do this right Pascal???
+  public void ballJerkBackward() {
+
+  motor2.set(ControlMode.PercentOutput, HopperConstants.jerkSpeed);
+  wait(1);
+  motor2.set(ControlMode.PercentOutput, 0);
+
+  }
+  
+  
 
   public void transportBackward() {
 
