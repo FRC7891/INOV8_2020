@@ -44,7 +44,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /* Disable all motor controllers */
     botMotor.set(ControlMode.PercentOutput, 0);
 
-    /* Factory Default all hardware to prevent unexpected behaviour */
+    /* Factory Default all hardware to prevent unexpected behavior */
     botMotor.configFactoryDefault();
 
     /* Set Neutral Mode */
@@ -56,8 +56,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * Max out the peak output (for all modes). However you can limit the output of
-     * a given PID object with configClosedLoopPeakOutput().
-     * Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%)
+     * a given PID object with configClosedLoopPeakOutput(). Config the peak and
+     * nominal outputs ([-1, 1] represents [-100, 100]%)
      */
     botMotor.configNominalOutputForward(1, ShooterConstants.kTimeoutMs);
     botMotor.configPeakOutputForward(1, ShooterConstants.kTimeoutMs);
@@ -68,7 +68,6 @@ public class ShooterSubsystem extends SubsystemBase {
     botMotor.configPeakCurrentDuration(ShooterConstants.kPeakTimeMs, ShooterConstants.kTimeoutMs);
     botMotor.configContinuousCurrentLimit(ShooterConstants.kContinCurrentAmps, ShooterConstants.kTimeoutMs);
     botMotor.enableCurrentLimit(true); // Honor initial setting
-
 
     /* FPID Gains for velocity servo */
     botMotor.config_kP(ShooterConstants.kSlot_Velocit, ShooterConstants.kGains_Velocit.kP, ShooterConstants.kTimeoutMs);
@@ -103,13 +102,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
-
   public void topShooterPID() {
 
     /* Disable all motor controllers */
     topMotor.set(ControlMode.PercentOutput, 0);
 
-    /* Factory Default all hardware to prevent unexpected behaviour */
+    /* Factory Default all hardware to prevent unexpected behavior */
     topMotor.configFactoryDefault();
 
     /* Set Neutral Mode */
@@ -166,7 +164,6 @@ public class ShooterSubsystem extends SubsystemBase {
     topMotor.selectProfileSlot(ShooterConstants.kSlot_Velocit, ShooterConstants.PID_PRIMARY);
   }
 
-
   @Override
   public void periodic() {
 
@@ -183,7 +180,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
-
   // Charlie, change this. I am just using this as a placeholder until you're done
   public void sliderValueFunction() {
 
@@ -196,7 +192,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   };
 
-
   public void velocityCheck(double vel) {
     velocityCheck = SmartDashboard.getString("velocity", "nil");
     if (vel == 0) {
@@ -206,14 +201,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
-
   public void ballMovingFunction(double top, double bot) {
-
     topMotor.set(ControlMode.PercentOutput, -top);
     botMotor.set(ControlMode.PercentOutput, bot);
 
   }
-
 
   public void ballMovingPID(double topRPM, double botRPM) {
     // Top motor PID
@@ -234,6 +226,5 @@ public class ShooterSubsystem extends SubsystemBase {
     } else {
       botMotor.set(ControlMode.PercentOutput, 0);
     }
-
   }
 }
