@@ -7,33 +7,33 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 //import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.Drivetrain;
-import frc.robot.commands.PIDDrivetrain;
-import frc.robot.commands.ShooterSpeedReached;
 import frc.robot.commands.TurnyBoiTheSequal;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HookSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.PIDPracticeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-
 /**
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
   private final HookSubsystem m_hooksubsystem = new HookSubsystem();
@@ -44,7 +44,7 @@ public class RobotContainer {
   private final HopperSubsystem m_hoppersubsystem = new HopperSubsystem();
   private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
   XboxController m_controller = new XboxController(0);
-  XboxController m_opperator = new XboxController(1);
+  XboxController m_operator = new XboxController(1);
   // The robot's subsystems and commands are defined here...
   //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
@@ -60,6 +60,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_hooksubsystem.setDefaultCommand(
+      new RunCommand(() -> m_hooksubsystem.level(m_operator.getRawAxis(OIConstants.RightTrigger), m_operator.getRawAxis(OIConstants.LeftTrigger)), m_hooksubsystem));
       new RunCommand(() -> m_hooksubsystem.level(m_opperator.getRawAxis(OIConstants.RightTrigger), m_opperator.getRawAxis(OIConstants.LeftTrigger)), m_hooksubsystem));
 
   //  m_drivetrainsubsystem.setDefaultCommand(
@@ -70,6 +71,45 @@ public class RobotContainer {
     //  new Drivetrain(m_drivetrainsubsystem, m_controller)
      //   );
     
+    /*
+    m_hoppersubsystem.setDefaultCommand(
+      new RunCommand(() -> m_hoppersubsystem.motorStop(), m_hoppersubsystem)
+      );
+    */
+ /* m_pidpracticesubsystem.setDefaultCommand(
+      new RunCommand(() -> m_pidpracticesubsystem.rpsspeed(0), m_pidpracticesubsystem)
+    );
+*/
+    m_elevatorsubsystem.setDefaultCommand(
+      new RunCommand(() -> m_elevatorsubsystem.raise(m_operator.getRawAxis(OIConstants.RightStickY)), m_elevatorsubsystem)
+    );
+    m_IntakeSubsystem.setDefaultCommand(
+      new RunCommand(() -> m_IntakeSubsystem.suck(m_operator.getRawAxis(OIConstants.LeftStickY)*-0.70), m_IntakeSubsystem)
+    );
+      m_hoppersubsystem.setDefaultCommand(
+          new RunCommand(() -> m_hoppersubsystem.spin(m_operator.getRawAxis(OIConstants.LeftStickY) * 0.90),
+              m_hoppersubsystem));
+
+
+      //    m_hoppersubsystem.setDefaultCommand(
+//      new RunCommand(() -> m_hoppersubsystem.TransportForward(m_operator.getRawAxis(OIConstants.LeftStickY)),
+//            m_IntakeSubsystem)
+//    );
+    m_hooksubsystem
+        .setDefaultCommand(new RunCommand(() -> m_hooksubsystem.level(m_opperator.getRawAxis(OIConstants.RightTrigger),
+            m_opperator.getRawAxis(OIConstants.LeftTrigger)), m_hooksubsystem));
+
+    m_drivetrainsubsystem.setDefaultCommand(
+        // new RunCommand(() ->
+        // m_drivetrainsubsystem.DirectionDeg(m_controller.getRawAxis(OIConstants.RightStickX),
+        // m_controller.getRawAxis(OIConstants.RightStickY)), m_drivetrainsubsystem));
+        // new Drivetrain(m_drivetrainsubsystem, m_controller));
+        new PIDDrivetrain(m_drivetrainsubsystem, m_controller));
+
+    /*
+     * m_hoppersubsystem.setDefaultCommand( new RunCommand(() ->
+     * m_hoppersubsystem.motorStop(), m_hoppersubsystem) );
+     */
     /*
     m_hoppersubsystem.setDefaultCommand(
       new RunCommand(() -> m_hoppersubsystem.motorStop(), m_hoppersubsystem)
@@ -106,6 +146,29 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+
+
+new JoystickButton(m_operator, Button.kStickLeft.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem)
+        .alongWith
+        (new RunCommand(() -> m_IntakeSubsystem.suck(m_operator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
+
+/*
+//This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
+    new JoystickButton(m_operator, Button.kA.value)
+    .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
+    .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0,0));
+//This code if for shooting balls for high goal from fixed position(need testing for values)
+new JoystickButton(m_operator, Button.kY.value)
+    .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
+    .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
+//This code is for un-jamming the hopper
+new JoystickButton(m_operator, Button.kB.value)
+    .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
+    .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
+*/
+  // this is for the quick turn function
+new JoystickButton(m_operator, Button.kStickLeft.value)
 //When the B button on the Xbox controller is pressed, a new command will be run which moves the hopper
 //backwards for (Insert time) in order to free up space for spinning the motor which happens after
 //because of the .andThen command. After it is shown that the shooter speed is true, it will move the
@@ -120,9 +183,13 @@ new JoystickButton(m_opperator, Button.kStickLeft.value)
         .alongWith
         (new RunCommand(() -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
 
+//This code is for bring balls back a slight bit. Needs what ever value up is on the d-pad.
+new JoystickButton(m_opperator, /* DButton_UpDownIdk??*/ )
+.whenPressed(() -> m_hoppersubsystem.ballJerkBackward());
+
 
 //This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
-    new JoystickButton(m_opperator, Button.kA.value)
+new JoystickButton(m_opperator, Button.kA.value)
     .whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0,0))
     .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0,0));
 //This code if for shooting balls for high goal from fixed position(need testing for values)
@@ -140,6 +207,15 @@ new JoystickButton(m_opperator, Button.kStickLeft.value)
 
 /*
 //This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
+    new JoystickButton(m_operator, Button.kA.value)
+        .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(0.3,0.3))
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0,0));
+//This code if for shooting balls for high goal from fixed position(need testing for values)
+    new JoystickButton(m_operator, Button.kY.value)
+        .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(0.65,.75))
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
+//This code is for toggling slider shooter
+    new JoystickButton(m_operator,Button.kX.value)
     new JoystickButton(m_opperator, Button.kA.value)
         .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(0.3,0.3))
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0,0));
@@ -153,16 +229,144 @@ new JoystickButton(m_opperator, Button.kStickLeft.value)
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
 
 //This code is for passing balls from loading zone to trench(need testing for values)
+    new JoystickButton(m_operator, Button.kY.value)
     new JoystickButton(m_opperator, Button.kY.value)
          .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(.4,.5))
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
 
     //This code is for un-jamming the hopper
+    new JoystickButton(m_operator, Button.kB.value)
     new JoystickButton(m_opperator, Button.kB.value)
         .whenPressed(() -> m_ShooterSubsystem.ballMovingFunction(-.3,-.3))
         .whenReleased(() -> m_ShooterSubsystem.ballMovingFunction(0, 0));
 
 
+//When the Y button on the Xbox controller is pressed, a new command will be run which moves the hopper
+//backwards for (Insert time) in order to free up space for spinning the motor which happens after
+//because of the .andThen command. After it is shown that the shooter speed is true, it will move the
+//hopper forward and into the shooter, firing the balls.
+//Okay I need to update this text
+*/
+
+
+//This code if for shooting balls for high goal from fixed position(need testing for values)
+new JoystickButton(m_operator, Button.kY.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportBackward(), m_hoppersubsystem).withTimeout(0.3)
+        .andThen(new RunCommand(() ->  m_ShooterSubsystem.ballMovingPID(0,0))))
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0,0));
+
+//This code is for passing balls from loading zone to trench(need testing for values)
+new JoystickButton(m_operator, Button.kX.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportBackward(), m_hoppersubsystem).withTimeout(0.3)
+        .andThen(new RunCommand(() -> m_ShooterSubsystem.ballMovingPID(0,0))))
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0,0));
+
+//This code is for trickling ballls into low goals while aligned to the goal(need testing for values)
+new JoystickButton(m_operator, Button.kA.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportBackward(), m_hoppersubsystem).withTimeout(0.3)
+        .andThen(new RunCommand(() -> m_ShooterSubsystem.ballMovingPID(0,0)))) 
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0,0));
+
+//Basically this gives the driver the ability to shoot.
+//I may make it so that it can only do it after the shooter speed is reached, along with an overrride
+//mode just in case
+//I'll just put the override mode on the interface
+//I'll need to define shooterPID. Right now it just returns true
+//Please remove the print text. Im really tired right now, and I dont want to
+/*
+new JoystickButton(m_controller, Button.kBumperRight.value)
+        .whenPressed(new ConditionalCommand(m_hoppersubsystem.transportForward(), print("I can't do that yet"),
+        ShooterSubsystem.botShooterPID::get));
+
+/*
+new JoystickButton(m_operator, Button.kStickLeft.value)
+        .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem)
+        .alongWith
+        (new RunCommand(() -> m_IntakeSubsystem.suck(m_operator.getRawAxis(OIConstants.LeftStickY)), m_IntakeSubsystem)));
+*/
+}
+    // When the B button on the Xbox controller is pressed, a new command will be
+    // run which moves the hopper
+    // backwards for (Insert time) in order to free up space for spinning the motor
+    // which happens after
+    // because of the .andThen command. After it is shown that the shooter speed is
+    // true, it will move the
+    // hopper forward and into the shooter, firing the balls.
+    // new JoystickButton(m_controller, Button.kB.value)
+    // .whenPressed(new RunCommand(() -> m_hoppersubsystem.transportBackward(),
+    // m_hoppersubsystem).withTimeout(0.3)
+    // .andThen(new ShooterSpeedReached(),
+    // (new RunCommand(() -> m_hoppersubsystem.transportForward(),
+    // m_hoppersubsystem))));
+
+    // new JoystickButton(m_opperator, Button.kStickLeft.value).whenPressed(
+    // new RunCommand(() -> m_hoppersubsystem.transportForward(),
+    // m_hoppersubsystem).alongWith(new RunCommand(
+    // () -> m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)),
+    // m_IntakeSubsystem)));
+
+    // This code is for trickling ballls into low goals while aligned to the
+    // goal(need testing for values)
+    new JoystickButton(m_opperator, Button.kA.value).whenPressed(() -> m_ShooterSubsystem.ballMovingPID(1000, 1000))
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
+    // This code if for shooting balls for high goal from fixed position(need
+    // testing for values)
+    new JoystickButton(m_opperator, Button.kY.value).whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0, 0))
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
+    // This code is for un-jamming the hopper
+    new JoystickButton(m_opperator, Button.kB.value).whenPressed(() -> m_ShooterSubsystem.ballMovingPID(0, 0))
+        .whenReleased(() -> m_ShooterSubsystem.ballMovingPID(0, 0));
+
+    // this is for the quick turn function
+    new JoystickButton(m_controller, Button.kA.value)
+        .whileHeld(() -> new TurnyBoiTheSequal(m_drivetrainsubsystem, m_controller));
+    new JoystickButton(m_controller, Button.kStart.value).whenPressed(() -> m_drivetrainsubsystem.zeroSensors(),
+        m_drivetrainsubsystem);
+
+    /*
+     * //This code is for trickling ballls into low goals while aligned to the
+     * goal(need testing for values) new JoystickButton(m_opperator,
+     * Button.kA.value) .whenPressed(() ->
+     * m_ShooterSubsystem.ballMovingFunction(0.3,0.3)) .whenReleased(() ->
+     * m_ShooterSubsystem.ballMovingFunction(0,0)); //This code if for shooting
+     * balls for high goal from fixed position(need testing for values) new
+     * JoystickButton(m_opperator, Button.kY.value) .whenPressed(() ->
+     * m_ShooterSubsystem.ballMovingFunction(0.65,.75)) .whenReleased(() ->
+     * m_ShooterSubsystem.ballMovingFunction(0, 0)); //This code is for toggling
+     * slider shooter new JoystickButton(m_opperator,Button.kX.value)
+     * .whenPressed(() -> m_ShooterSubsystem.sliderValueFunction()) .whenReleased(()
+     * -> m_ShooterSubsystem.ballMovingFunction(0, 0));
+     *
+     * //This code is for passing balls from loading zone to trench(need testing for
+     * values) new JoystickButton(m_opperator, Button.kY.value) .whenPressed(() ->
+     * m_ShooterSubsystem.ballMovingFunction(.4,.5)) .whenReleased(() ->
+     * m_ShooterSubsystem.ballMovingFunction(0, 0));
+     *
+     * //This code is for un-jamming the hopper new JoystickButton(m_opperator,
+     * Button.kB.value) .whenPressed(() ->
+     * m_ShooterSubsystem.ballMovingFunction(-.3,-.3)) .whenReleased(() ->
+     * m_ShooterSubsystem.ballMovingFunction(0, 0));
+     *
+     *
+     * //When the B button on the Xbox controller is pressed, a new command will be
+     * run which moves the hopper //backwards for (Insert time) in order to free up
+     * space for spinning the motor which happens after //because of the .andThen
+     * command. After it is shown that the shooter speed is true, it will move the
+     * //hopper forward and into the shooter, firing the balls. new
+     * JoystickButton(m_controller, Button.kB.value) .whenPressed(new RunCommand(()
+     * -> m_hoppersubsystem.transportBackward(), m_hoppersubsystem).withTimeout(0.3)
+     * .andThen(new ShooterSpeedReached(),(new RunCommand(() ->
+     * m_hoppersubsystem.transportForward(), m_hoppersubsystem))));
+     *
+     *
+     * new JoystickButton(m_opperator, Button.kStickLeft.value) .whenPressed(new
+     * RunCommand(() -> m_hoppersubsystem.transportForward(), m_hoppersubsystem)
+     * .alongWith (new RunCommand(() ->
+     * m_IntakeSubsystem.suck(m_opperator.getRawAxis(OIConstants.LeftStickY)),
+     * m_IntakeSubsystem)));
+     *
+     */
+  }
 //When the B button on the Xbox controller is pressed, a new command will be run which moves the hopper
 //backwards for (Insert time) in order to free up space for spinning the motor which happens after
 //because of the .andThen command. After it is shown that the shooter speed is true, it will move the
@@ -180,13 +384,31 @@ new JoystickButton(m_opperator, Button.kStickLeft.value)
  */       
 }
 
+
+  public class Container {
+    private NetworkTableInstance nt = NetworkTableInstance.getDefault();
+    private SendableChooser<Command> autonomousModeChooser;
+    Joystick m_controller = new Joystick(0);
+  }
+
+  private Command print(String string) {
+    return null;
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
+  /*
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
+    return (Command) autonomousModeChooser.getSelected();
+  }
+
   }
 }
+  public Command getAutonomousCommand() {
+    return (Command) autonomousModeChooser.getSelected();
+  }
+}
+*/

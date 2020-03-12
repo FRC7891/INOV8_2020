@@ -38,6 +38,7 @@ public final class Constants {
 		public static final int Motor2ID = 8;
 		public static double forwardspeed = 0.1;
 		public static double backwardspeed = -0.1;
+		public static double jerkSpeed = -.1;
 	}
 
 	public static final class ShooterConstants {
@@ -52,7 +53,7 @@ public final class Constants {
 
 		/**
 		 * How many sensor units per rotation. Using CTRE Magnetic Encoder.
-		 * 
+		 *
 		 * @link https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
 		 */
 		public final static int kSensorUnitsPerRotation = 4096;
@@ -73,14 +74,14 @@ public final class Constants {
 		 * loop. kF: 1023 represents output value to Talon at 100%, 6800 represents
 		 * Velocity units at 100% output Not all set of Gains are used in this project
 		 * and may be removed as desired.
-		 * 
+		 *
 		 * kP kI kD kF Iz PeakOut
 		 */
 		public final static Gains kGains_Distanc = new Gains(0.1, 0.0, 0.0, 0.0, 100, 0.50);
 		public final static Gains kGains_Turning = new Gains(2.0, 0.0, 4.0, 0.0, 200, 1.00);
 
 		// The velocity PID for shooter
-		public final static Gains kGains_Velocit = new Gains(0.1, 0.0, 20.0, 1023.0 / 6800.0, 300, 0.50);
+		public final static Gains kGains_Velocit = new Gains(0.065, 0.0, 0.2, .7, 300, 1.0);
 
 		public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
 
@@ -124,12 +125,12 @@ public final class Constants {
 		public static final int MotorL2ID = 3;
 		public static final int MotorR2ID = 4;
 
-		public static final double SpeedL = .4;
-		public static final double SpeedR = .4;
+		public static final double SpeedL = .8;
+		public static final double SpeedR = .8;
 
 		// PID Gains kP kI kD kF kI kZ
-		public final static Gains kGains_Distanc = new Gains(0.1, 0.0, 0.0, 0.0, 100, 0.50);
-		public final static Gains kGains_Turning = new Gains(2.0, 0.0, 4.0, 0.0, 200, 1.00);
+		public final static Gains kGains_Distanc = new Gains(0.3, 0.0, 0.0, 0.0, 100, 0.50);
+		public final static Gains kGains_Turning = new Gains(0.2, 0.0, 0.0, 0.0, 200, 1.00);
 		public final static Gains kGains_Velocit = new Gains(0.1, 0.0, 20.0, 1023.0 / 6800.0, 300, 0.50);
 		public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
 
@@ -159,12 +160,12 @@ public final class Constants {
 		public final static int kSlot_MotProf = SLOT_3;
 
 		//
-		public final static int kSensorUnitsPerRotation = 4096;
+		public final static int kSensorUnitsPerRotation = 2048;
 
 		/**
 		 * Number of rotations to drive when performing Distance Closed Loop
 		 */
-		public final static double kRotationsToTravel = 6;
+		public final static double kRotationsToTravel = 10;
 
 		/**
 		 * This is a property of the Pigeon IMU, and should not be changed.
@@ -183,8 +184,8 @@ public final class Constants {
 		public final static double kNeutralDeadband = 0.001;
 
 		// pidgeon ID
-		public final static int PidgeonID = 1;
-		public static double turn_rate = 1 / 50;
+		public final static int PidgeonID = 15;
+		public static double turn_rate = 50;
 	}
 
 	public static class PIDConstants {
@@ -221,7 +222,7 @@ public final class Constants {
 
 	public static class IntakeConstants {
 
-		public static final int Motor1ID = 7;
+		public static final int Motor1ID = 4;
 
 	}
 

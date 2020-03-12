@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
@@ -19,6 +18,7 @@ public class Drivetrain extends CommandBase {
    */
   DriveTrainSubsystem m_drivetrainsubsystem;
   XboxController m_driverController;
+
   public Drivetrain(DriveTrainSubsystem subsystem, XboxController driverController) {
     m_drivetrainsubsystem = subsystem;
     m_driverController = driverController;
@@ -36,9 +36,9 @@ public class Drivetrain extends CommandBase {
   public void execute() {
     double leftstickY = m_driverController.getRawAxis(OIConstants.LeftStickY);
     double rightstickX = m_driverController.getRawAxis(OIConstants.RightStickX);
- 
-    m_drivetrainsubsystem.setLeftMotors(leftstickY - rightstickX);
-    m_drivetrainsubsystem.setRightMotors(leftstickY + rightstickX);
+
+    m_drivetrainsubsystem.setLeftMotors(leftstickY + rightstickX);
+    m_drivetrainsubsystem.setRightMotors(leftstickY - rightstickX);
   }
 
   // Called once the command ends or is interrupted.
