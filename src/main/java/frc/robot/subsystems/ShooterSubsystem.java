@@ -57,9 +57,18 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Max out the peak output (for all modes). However you can limit the output of
      * a given PID object with configClosedLoopPeakOutput().
+     * Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%)
      */
-    botMotor.configPeakOutputForward(1.0, ShooterConstants.kTimeoutMs);
+    botMotor.configNominalOutputForward(1, ShooterConstants.kTimeoutMs);
+    botMotor.configPeakOutputForward(1, ShooterConstants.kTimeoutMs);
+    botMotor.configNominalOutputReverse(0, ShooterConstants.kTimeoutMs);
     botMotor.configPeakOutputReverse(0, ShooterConstants.kTimeoutMs);
+
+    botMotor.configPeakCurrentLimit(ShooterConstants.kPeakCurrentAmps, ShooterConstants.kTimeoutMs);
+    botMotor.configPeakCurrentDuration(ShooterConstants.kPeakTimeMs, ShooterConstants.kTimeoutMs);
+    botMotor.configContinuousCurrentLimit(ShooterConstants.kContinCurrentAmps, ShooterConstants.kTimeoutMs);
+    botMotor.enableCurrentLimit(true); // Honor initial setting
+
 
     /* FPID Gains for velocity servo */
     botMotor.config_kP(ShooterConstants.kSlot_Velocit, ShooterConstants.kGains_Velocit.kP, ShooterConstants.kTimeoutMs);
@@ -94,6 +103,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
+
   public void topShooterPID() {
 
     /* Disable all motor controllers */
@@ -111,10 +121,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * Max out the peak output (for all modes). However you can limit the output of
-     * a given PID object with configClosedLoopPeakOutput().
+     * a given PID object with configClosedLoopPeakOutput(). Config the peak and
+     * nominal outputs ([-1, 1] represents [-100, 100]%)
      */
-    topMotor.configPeakOutputForward(+1.0, ShooterConstants.kTimeoutMs);
+    topMotor.configNominalOutputForward(1, ShooterConstants.kTimeoutMs);
+    topMotor.configPeakOutputForward(1, ShooterConstants.kTimeoutMs);
+    topMotor.configNominalOutputReverse(0, ShooterConstants.kTimeoutMs);
     topMotor.configPeakOutputReverse(0, ShooterConstants.kTimeoutMs);
+
+    topMotor.configPeakCurrentLimit(ShooterConstants.kPeakCurrentAmps, ShooterConstants.kTimeoutMs);
+    topMotor.configPeakCurrentDuration(ShooterConstants.kPeakTimeMs, ShooterConstants.kTimeoutMs);
+    topMotor.configContinuousCurrentLimit(ShooterConstants.kContinCurrentAmps, ShooterConstants.kTimeoutMs);
+    topMotor.enableCurrentLimit(true); // Honor initial setting
 
     /* FPID Gains for velocity servo */
     topMotor.config_kP(ShooterConstants.kSlot_Velocit, ShooterConstants.kGains_Velocit.kP, ShooterConstants.kTimeoutMs);
@@ -148,6 +166,7 @@ public class ShooterSubsystem extends SubsystemBase {
     topMotor.selectProfileSlot(ShooterConstants.kSlot_Velocit, ShooterConstants.PID_PRIMARY);
   }
 
+
   @Override
   public void periodic() {
 
@@ -164,6 +183,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
+
   // Charlie, change this. I am just using this as a placeholder until you're done
   public void sliderValueFunction() {
 
@@ -176,6 +196,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   };
 
+
   public void velocityCheck(double vel) {
     velocityCheck = SmartDashboard.getString("velocity", "nil");
     if (vel == 0) {
@@ -185,6 +206,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
+
   public void ballMovingFunction(double top, double bot) {
 
     topMotor.set(ControlMode.PercentOutput, -top);
@@ -192,9 +214,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
+
   public void ballMovingPID(double topRPM, double botRPM) {
-
-
     // Top motor PID
     if (topRPM != 0) {
       topRPM = SmartDashboard.getNumber("topPID", 0);
@@ -214,11 +235,5 @@ public class ShooterSubsystem extends SubsystemBase {
       botMotor.set(ControlMode.PercentOutput, 0);
     }
 
-  }
-
-  // Charlie I need this done
-  // More logic required for encoders
-  public boolean speedReached() {
-    return (true);
   }
 }

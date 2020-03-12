@@ -30,7 +30,7 @@ public class HopperSubsystem extends SubsystemBase {
   public void ballJerkBackward() {
 
   motor2.set(ControlMode.PercentOutput, HopperConstants.jerkSpeed);
-  wait(1);
+  //wait(1);
   motor2.set(ControlMode.PercentOutput, 0);
 
   }

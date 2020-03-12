@@ -34,9 +34,12 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   // for pidgeon
   private final PigeonIMU _pidgey = new PigeonIMU(15);
-  double SensorTurnValue = 0;
-  double target_sensorUnits = 0;
-  double last_speed = 0;
+
+  double TurnSensorUnits = 0;
+  int AtTurnCnt = 0;
+
+  double TargetSensorUnits = 0;
+  int AtTargetCnt = 0;
 
   public DriveTrainSubsystem() {
 
@@ -51,10 +54,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
     TalonFXConfiguration _rightConfig = new TalonFXConfiguration();
 
     // * Set Neutral Mode */
-    MotorL1.setNeutralMode(NeutralMode.Coast);
-    MotorR1.setNeutralMode(NeutralMode.Coast);
-    MotorL2.setNeutralMode(NeutralMode.Coast);
-    MotorR1.setNeutralMode(NeutralMode.Coast);
+    MotorL1.setNeutralMode(NeutralMode.Brake);
+    MotorR1.setNeutralMode(NeutralMode.Brake);
+    MotorL2.setNeutralMode(NeutralMode.Brake);
+    MotorR1.setNeutralMode(NeutralMode.Brake);
 
     // * Configure output and sensor direction */
     MotorL1.setInverted(_leftInvert);
@@ -62,7 +65,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     MotorL2.setInverted(_leftInvert);
     MotorR2.setInverted(_rightInvert);
 
-    StatorCurrentLimitConfiguration currentConfig = new StatorCurrentLimitConfiguration(true, 25, 30, 100);
+    StatorCurrentLimitConfiguration currentConfig = new StatorCurrentLimitConfiguration(true, 35, 40, 100);
     MotorL1.configStatorCurrentLimit(currentConfig);
     MotorR1.configStatorCurrentLimit(currentConfig);
     MotorL2.configStatorCurrentLimit(currentConfig);
@@ -137,8 +140,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     MotorR1.configClosedLoopPeriod(1, closedLoopTimeMs, DriveTrainConstants.kTimeoutMs);
 
     // * Motion Magic Configs */
-    _rightConfig.motionAcceleration = 10000; // (distance units per 100 ms) per second
-    _rightConfig.motionCruiseVelocity = 5000; // distance units per 100 ms
+    _rightConfig.motionAcceleration =   (int) (10  * (6400 / (60 * 10))); // (distance units per 100 ms) per second -- Max speed in 1/10s
+    _rightConfig.motionCruiseVelocity = (int) (0.8 * (6400 / (60 * 10))); // distance units per 100 ms // MAX 21700 -- 80% of max speed
 
     // * APPLY the config settings */
     MotorL1.configAllSettings(_leftConfig);
@@ -165,22 +168,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
     zeroSensors();
   }
 
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("turn", TurnSensorUnits);
+    SmartDashboard.putNumber("distR", MotorR1.getSensorCollection().getIntegratedSensorPosition());
+    SmartDashboard.putNumber("distL", MotorL1.getSensorCollection().getIntegratedSensorPosition());
+    SmartDashboard.putNumber("setdist", TargetSensorUnits);
+    SmartDashboard.putNumber("gyro", MotorR1.getSelectedSensorPosition(1));
   }
 
-  public void setLeftMotors(double speed) {
-    System.out.println(speed);
-    MotorL1.set(ControlMode.PercentOutput, speed * DriveTrainConstants.SpeedL);
-    MotorL2.follow(MotorL1);
-  }
-
-  public void setRightMotors(double speed) {
-    System.out.println(speed);
-    MotorR1.set(ControlMode.PercentOutput, speed * DriveTrainConstants.SpeedR);
-    MotorR2.follow(MotorR1);
-  }
 
   void setRobotDistanceConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig) {
     /**
@@ -234,46 +232,56 @@ public class DriveTrainSubsystem extends SubsystemBase {
     masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
   }
 
+
+  public void setLeftMotors(double speed) {
+    MotorL1.set(ControlMode.PercentOutput, speed * DriveTrainConstants.SpeedL);
+    MotorL2.follow(MotorL1);
+  }
+
+
+  public void setRightMotors(double speed) {
+    MotorR1.set(ControlMode.PercentOutput, speed * DriveTrainConstants.SpeedR);
+    MotorR2.follow(MotorR1);
+    TurnSensorUnits = MotorR1.getSelectedSensorPosition(1);
+  }
+
+
   public void PIDArcade(double speed, double turn) {
     /* Calculate targets from gamepad inputs */
-    if (speed > 0.05 || speed < -0.05) {
-      last_speed = speed;
-      target_sensorUnits = (speed * DriveTrainConstants.kSensorUnitsPerRotation
+    if (Math.abs(speed) > 0.05) {
+      TargetSensorUnits = (speed * DriveTrainConstants.kSensorUnitsPerRotation
           * DriveTrainConstants.kRotationsToTravel)
           + ((MotorL1.getSensorCollection().getIntegratedSensorPosition()
               - MotorR1.getSensorCollection().getIntegratedSensorPosition()) / 2);
-    } else if (last_speed != 0) {
-      target_sensorUnits = (last_speed * DriveTrainConstants.kSensorUnitsPerRotation
-          * DriveTrainConstants.kRotationsToTravel)
-          + ((MotorL1.getSensorCollection().getIntegratedSensorPosition()
-              - MotorR1.getSensorCollection().getIntegratedSensorPosition()) / 2);
-      last_speed = 0;
+    } else {
+      TargetSensorUnits = ((MotorL1.getSensorCollection().getIntegratedSensorPosition()
+          - MotorR1.getSensorCollection().getIntegratedSensorPosition()) / 2);
     }
 
-    if (Math.abs(turn) < .05)
-      turn = 0;
-    SensorTurnValue += -turn * DriveTrainConstants.turn_rate;
+    if (Math.abs(turn) > .05) {
+      TurnSensorUnits += -turn * DriveTrainConstants.turn_rate;
+    } else {
+      TurnSensorUnits = MotorR1.getSelectedSensorPosition(1);
+    }
 
-    SmartDashboard.putNumber("turn", SensorTurnValue);
-    SmartDashboard.putNumber("distR", MotorR1.getSensorCollection().getIntegratedSensorPosition());
-    SmartDashboard.putNumber("distL", MotorL1.getSensorCollection().getIntegratedSensorPosition());
-    SmartDashboard.putNumber("setdist", target_sensorUnits);
-    SmartDashboard.putNumber("gyro", MotorR1.getSelectedSensorPosition(1));
     /*
      * Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon
      */
-    MotorR1.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, SensorTurnValue);
+    MotorR1.set(ControlMode.MotionMagic, TargetSensorUnits, DemandType.AuxPID, TurnSensorUnits);
     MotorL1.follow(MotorR1, FollowerType.AuxOutput1);
     MotorL2.follow(MotorR1, FollowerType.AuxOutput1);
     MotorR2.follow(MotorR1);
   }
 
+
   /** Zero all sensors, both Talons and Pigeon */
   public void zeroSensors() {
     MotorR1.set(ControlMode.PercentOutput, 0);
+    MotorR2.follow(MotorR1);
     MotorL1.set(ControlMode.PercentOutput, 0);
-    target_sensorUnits = 0;
-    SensorTurnValue = 0;
+    MotorL2.follow(MotorL1);
+    TargetSensorUnits = 0;
+    TurnSensorUnits = 0;
     MotorL1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     MotorR1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     _pidgey.setYaw(0, DriveTrainConstants.kTimeoutMs);
@@ -281,42 +289,78 @@ public class DriveTrainSubsystem extends SubsystemBase {
     System.out.println("[Quadrature Encoders + Pigeon] All sensors are zeroed.\n");
   }
 
+
   /** Zero QuadEncoders, used to reset position when initializing Motion Magic */
   void zeroDistance() {
     MotorR1.set(ControlMode.PercentOutput, 0);
+    MotorR2.follow(MotorR1);
     MotorL1.set(ControlMode.PercentOutput, 0);
-    target_sensorUnits = 0;
+    MotorL2.follow(MotorL1);
+    TargetSensorUnits = 0;
     MotorL1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     MotorR1.getSensorCollection().setIntegratedSensorPosition(0, DriveTrainConstants.kTimeoutMs);
     System.out.println("[Quadrature Encoders] All encoders are zeroed.\n");
   }
 
-  // inches
-  public void AutoDist(double dist) {
 
-    target_sensorUnits = (dist * (DriveTrainConstants.kSensorUnitsPerRotation * 10.75) / 6 * Math.PI)
-        + target_sensorUnits;
+  // in inches
+  public void ToTarget(double dist) {
+
+    AtTargetCnt = 0;
+    TargetSensorUnits += (dist * (DriveTrainConstants.kSensorUnitsPerRotation * 10.75) / 6 * Math.PI);
 
     /*
      * Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon
      */
-    MotorR1.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, SensorTurnValue);
+    MotorR1.set(ControlMode.MotionMagic, TargetSensorUnits, DemandType.AuxPID, TurnSensorUnits);
     MotorL1.follow(MotorR1, FollowerType.AuxOutput1);
     MotorL2.follow(MotorR1, FollowerType.AuxOutput1);
     MotorR2.follow(MotorR1);
-
   }
 
+
+  public boolean AtTarget() {
+    // 2048 == 1 rotation so 205 = 1/10 rotation
+    if (Math.abs(TargetSensorUnits - ((MotorL1.getSensorCollection().getIntegratedSensorPosition()
+        - MotorR1.getSensorCollection().getIntegratedSensorPosition()) / 2)) <= 205)
+      AtTargetCnt++;
+    else
+      AtTargetCnt = 0;
+
+    // 50 counts a sec
+    if (AtTargetCnt > 10)
+      return true;
+    return false;
+  }
+
+
+  // Angle is 3600 per rotation
   public void Quickturn(double angle) {
-    SensorTurnValue = (SensorTurnValue + angle);
+    TurnSensorUnits = (TurnSensorUnits + angle);
+
     /*
      * Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon
      */
-    MotorR1.set(ControlMode.MotionMagic, 0, DemandType.AuxPID, SensorTurnValue);
+    MotorR1.set(ControlMode.MotionMagic, 0, DemandType.AuxPID, TurnSensorUnits);
     MotorL1.follow(MotorR1, FollowerType.AuxOutput1);
     MotorL2.follow(MotorR1, FollowerType.AuxOutput1);
     MotorR2.follow(MotorR1);
   }
+
+
+  public boolean AtTurn() {
+     // 10 == 1 degree so 10 = 1 degree
+     if (Math.abs(TurnSensorUnits - MotorR1.getSelectedSensorPosition(1)) <= 10)
+      AtTurnCnt++;
+    else
+      AtTurnCnt = 0;
+
+    // 50 counts a sec
+    if (AtTurnCnt > 10)
+      return true;
+    return false;
+  }
+
 
   public double DirectionDeg(double RightstickX, double RightstickY) {
     if (Math.abs(RightstickX) < .5 && Math.abs(RightstickY) < .5)
@@ -327,10 +371,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
       return ((Math.toDegrees(Math.atan2(RightstickY, RightstickX)) + 90) * 10);
   }
 
+
   public double TurnyBoi(double Final) {
     if (Final == -1)
       return 0;
-    double Remainder = (3600 - (SensorTurnValue % 3600));
+    double Remainder = (3600 - (TurnSensorUnits % 3600));
     double Turn = (Final + Remainder);
     double TurnValue = ((Turn) % 3600);
     if (TurnValue > 1800)

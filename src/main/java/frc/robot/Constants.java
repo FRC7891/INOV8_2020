@@ -110,6 +110,10 @@ public final class Constants {
 		public final static int kSlot_Turning = SLOT_1;
 		public final static int kSlot_Velocit = SLOT_2;
 		public final static int kSlot_MotProf = SLOT_3;
+
+		public static final int kPeakCurrentAmps = 40;
+		public static final int kPeakTimeMs = 100;
+		public static final int kContinCurrentAmps = 30;
 	}
 
 	public static class ElevatorConstants {
