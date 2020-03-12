@@ -81,12 +81,12 @@ while(True):
     cmd = usb.recv(2, timeout=1000) # Change this to match the number of commands received
     if not cmd:
         continue
-    if cmd[0] == b's'[0] and stream:
+    if cmd[0] == b'1'[0] and stream:
         usb.send(ustruct.pack(">llll", use_the_force_luke , ball_angle , ball_distance , img.size()))
         usb.send(img)
     else:
         usb.send(ustruct.pack(">llll", use_the_force_luke , ball_angle , ball_distance , 0 ))
-        if cmd[0] == b's'[0]:
+        if cmd[0] == b'1'[0]:
             stream = True
         else:
             stream = False
@@ -96,7 +96,7 @@ while(True):
         pyb.LED(1).toggle()
     if cmd[1] == b'g'[0]:
         pyb.LED(2).toggle()
-    if cmd[1] == b'w'[0]:
+    if cmd[1] == b'1'[0]:
         pin.value(True)
     else:
         pin.value(False)
