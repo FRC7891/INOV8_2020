@@ -259,7 +259,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     if (Math.abs(turn) > .05) {
-      TurnSensorUnits += -turn * DriveTrainConstants.turn_rate;
+      //TurnSensorUnits += -turn * DriveTrainConstants.turn_rate;
+      TurnSensorUnits = (-turn * DriveTrainConstants.turn_rate) + MotorR1.getSelectedSensorPosition(1);
     } else {
       TurnSensorUnits = MotorR1.getSelectedSensorPosition(1);
     }
